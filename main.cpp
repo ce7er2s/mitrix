@@ -24,6 +24,7 @@ public:
 			this->_storage = *_storage; // запись при наличии готового массива. Полезно при копировании матрицы.
 		}								// здесь добавить функцию get_storage c копированием массива для этого случая.
 	}
+
 	void inputFrom(std::istream& _stream = std::cin, uint32_t _rows = 0, uint32_t _columns = 0) {
 		if (_rows != 0 || _columns != 0) {
 			if (_rows == 0)        // _stream это ссылка на поток ввода (std::ifstream легко кастуется в std::istream)
@@ -32,10 +33,10 @@ public:
 				_columns = this->columns;
 			this->resizeTo(_rows, _columns); // Изменение размеров матрицы.
 		} else {
-			_rows = this->rows;
+			_rows = this->rows; // Вариант без переразметки.
 			_columns = this->columns;
 		}
-		for (uint32_t i = 0; i < _rows; i++)
+		for (uint32_t i = 0; i < _rows; i++) // Чтение из переданного потока. Почему-то падает с 139 (SEGFAULT)
 			for (uint32_t j = 0; j < _columns; j++)
 				_stream >> this->_storage[i][j];
 	}
@@ -43,10 +44,10 @@ public:
 	void resizeTo(uint32_t _rows, uint32_t _columns) {
 		for (uint32_t i = 0; i < this->rows; i++) {
 			for (uint32_t j = 0; j < this->columns; j++)
-				this->_storage[i].resize(_columns);
+				this->_storage[i].resize(_columns); // Изменение размера внутренних массивов _storage
 		}
-		this->_storage.resize(_rows);
-		this->rows = _rows;
+		this->_storage.resize(_rows); // Изменение размера самого _storage
+		this->rows = _rows; // Запись размеров
 		this->columns = _columns;
 	}
 };
@@ -54,7 +55,7 @@ public:
 int main() {
 	auto* _storage = new std::vector<std::vector<uint32_t>>;
 	Matrix<uint32_t> matrix = Matrix<uint32_t>(2, 3, _storage);
-	matrix.inputFrom(std::cin);
+	matrix.inputFrom();
 }
 
 // mitrix-cli
