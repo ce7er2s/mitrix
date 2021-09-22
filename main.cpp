@@ -25,17 +25,29 @@ public:
 		}								// здесь добавить функцию get_storage c копированием массива для этого случая.
 	}
 	void inputFrom(std::istream& _stream = std::cin, uint32_t _rows = 0, uint32_t _columns = 0) {
-		if (_rows == 0)		// _stream это ссылка на поток ввода (std::ifstream легко кастуется в std::istream)
+		if (_rows != 0 || _columns != 0) {
+			if (_rows == 0)        // _stream это ссылка на поток ввода (std::ifstream легко кастуется в std::istream)
+				_rows = this->rows;        // Если хотя бы один размер матрицы ненулевой, ее размеры меняются
+			if (_columns == 0)
+				_columns = this->columns;
+			this->resizeTo(_rows, _columns); // Изменение размеров матрицы.
+		} else {
 			_rows = this->rows;
-		else
-			this->rows = _rows;
-		if (_columns == 0)
 			_columns = this->columns;
-		else
-			this->columns = _columns;
+		}
 		for (uint32_t i = 0; i < _rows; i++)
 			for (uint32_t j = 0; j < _columns; j++)
 				_stream >> this->_storage[i][j];
+	}
+
+	void resizeTo(uint32_t _rows, uint32_t _columns) {
+		for (uint32_t i = 0; i < this->rows; i++) {
+			for (uint32_t j = 0; j < this->columns; j++)
+				this->_storage[i].resize(_columns);
+		}
+		this->_storage.resize(_rows);
+		this->rows = _rows;
+		this->columns = _columns;
 	}
 };
 
