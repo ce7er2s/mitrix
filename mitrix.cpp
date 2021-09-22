@@ -76,4 +76,42 @@ public:
 		}
 		return temp;
 	}
+	void multiplyWith(Matrix& _matrix) {
+		std::vector<std::vector<T>> temp;
+		uint32_t size = _matrix.rows;
+		uint32_t temp_rows = this->rows;
+		uint32_t temp_columns = _matrix.columns;
+		temp.resize(temp_rows);
+		for (uint32_t i = 0; i < size; i++)
+			temp[i].resize(temp_columns);
+		for (uint32_t i = 0; i < temp_rows; i++) {
+			for (uint32_t j = 0; j < temp_columns; j++) {
+				for (uint32_t k = 0; k < size; k++)
+					temp[i][j] += this->_storage[i][k] * _matrix._storage[k][j];
+			}
+		}
+		this->_storage = temp;
+		this->columns = temp_columns;
+	}
+	T determinantOf() {
+		if (this->rows == this->columns) {
+			if (this->rows == 2) {
+				return this->_storage[0][0]*this->_storage[1][1] - this->_storage[0][1]*this->_storage[1][0];
+			} else {
+				T determinant = 0;
+				for (uint32_t i = 0; i < this->rows; i++) {
+					for (uint32_t j = 0; j < this->columns; j++) {
+						if (i+j % 2 == 0) {
+							determinant += (this->_storage[i][j] * this->submatrixOf(i,j).determinantOf());
+						} else {
+							determinant -= (this->_storage[i][j] * this->submatrixOf(i,j).determinantOf());
+						}
+					}
+				}
+				return determinant;
+			}
+		} else {
+			return;
+		}
+	}
 };
