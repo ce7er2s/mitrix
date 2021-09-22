@@ -3,4 +3,4 @@ project(untitled)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(matrixer main.cpp)
+add_executable(mitrix-cli main.cpp)

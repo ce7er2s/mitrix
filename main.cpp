@@ -2,7 +2,6 @@
 #include <vector>
 
 template <typename T> class Matrix {
-
 	uint32_t columns = 0;
 	uint32_t rows = 0;
 	std::vector<std::vector<T>> _storage;
@@ -29,5 +28,6 @@ public:
 int main() {
 	auto* _storage = new std::vector<std::vector<uint32_t>>;
 	Matrix<uint32_t> matrix = Matrix<uint32_t>(2, 3, _storage);
-	;
 }
+
+// mitrix-cli
