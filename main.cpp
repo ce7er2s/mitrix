@@ -4,7 +4,6 @@
 template <typename T> class Matrix {
 	uint32_t columns = 0;
 	uint32_t rows = 0;
-private:
 	std::vector<std::vector<T>> _storage;
 public:
 	void operator[] (int32_t n) {  // Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
@@ -53,9 +52,9 @@ public:
 };
 
 int main() {
-	auto* _storage = new std::vector<std::vector<uint32_t>>;
-	Matrix<uint32_t> matrix = Matrix<uint32_t>(2, 3, _storage);
+	Matrix<uint32_t> matrix = Matrix<uint32_t>(2, 3);
 	matrix.inputFrom();
+	int i = 0;
 }
 
 // mitrix-cli
