@@ -2,29 +2,32 @@
 #include <vector>
 
 template <typename T> class Matrix {
+
 	uint32_t columns = 0;
 	uint32_t rows = 0;
-	std::vector<std::vector<T>> storage;
+	std::vector<std::vector<T>> _storage;
 public:
-	void operator[] (int32_t n) {
+	void operator[] (int32_t n) {  // Реализация доступа по отрицательному индексу aka Python-style
 		if (n >= 0)
-			return this->storage[n];
+			return this->_storage[n];
 		else
-			return this->storage[(this->rows)-n];
+			return this->_storage[(this->rows)-n];
 	}
 	explicit Matrix(uint32_t rows = 0, uint32_t columns = 0, std::vector<std::vector<T>>* _storage = nullptr) {
 		this->columns = columns;
-		this->columns = rows;
-		if (_storage == nullptr) {
-			this->storage = std::vector<std::vector<T>>(rows);
+		this->rows = rows;
+		if (_storage == nullptr) {  // Запись в хранилище
+			this->_storage = std::vector<std::vector<T>>(rows);
 			for (size_t i = 0; i < rows; i++)
-				this->storage[i].resize(this->columns);
+				this->_storage[i].resize(this->columns);
 		} else {
-			this->storage = *_storage;
+			this->_storage = *_storage;
 		}
 	}
 };
 
 int main() {
-	Matrix<uint32_t> matrix = Matrix<uint32_t>(10, 10);
+	auto* _storage = new std::vector<std::vector<uint32_t>>;
+	Matrix<uint32_t> matrix = Matrix<uint32_t>(2, 3, _storage);
+	;
 }
