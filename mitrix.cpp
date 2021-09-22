@@ -61,4 +61,19 @@ public:
 		this->rows = _rows; // Запись размеров
 		this->columns = _columns;
 	}
+	Matrix<T> submatrixOf (uint32_t _row, uint32_t _column) {
+		Matrix<T> temp = Matrix<T>((this->rows)-1, (this->columns)-1);
+		uint32_t k = 0; // Номер ряда новой матрицы
+		for (uint32_t i = 0; i < this->rows; i++) {
+			uint32_t l = 0; // Номер столбца новой матрицы
+			for (uint32_t j = 0; j < this->columns; j++) {
+				if (i != _row and j != _column) // Запись только если координаты не совпадают с вычеркнутыми полями.
+					temp._storage[k][l++] = this->_storage[i][j]; // Запись в temp с инкреминированием l
+			}
+			if (i != _row) {
+				k += 1;
+			}
+		}
+		return temp;
+	}
 };
