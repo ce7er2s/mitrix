@@ -1,6 +1,7 @@
 #include <iostream>
+#include <fstream>
 
-#include "mitrix.cpp"  // TODO: разнести объявление и имплементацию Matrix
+#include "mitrix.h"  // TODO: разнести объявление и имплементацию Matrix
 
 int main() {
 	Matrix<uint32_t> matrix = Matrix<uint32_t>(2, 3); // Всякие проверки функциональности
