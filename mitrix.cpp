@@ -4,23 +4,27 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 
 template <typename T> class Matrix {
 	uint32_t columns = 0;
 	uint32_t rows = 0;
 	std::vector<std::vector<T>> _storage;
 public:
+	T operator~ () {
+		return this->determinantOf();
+	}
 	std::vector<T> operator[] (int32_t n) {
 		return this->_storage[n];	// TODO: Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
 	}
 	Matrix<T> operator* (Matrix& _matrix_2) { // Надо проверить как я в принципе передаю параметры.
-		return Matrix<T>(*this, _matrix_2);
+		return Matrix<T>(*this, _matrix_2);	//  Плохо работает.
 	}
-	void operator*= (Matrix& _matrix) { // Плохо работает.
+	void operator*= (Matrix& _matrix) {
 		this->multiplyWith(_matrix);
 	}
 	Matrix (Matrix _matrix_1, Matrix _matrix_2) { // умножение на основе метода multiplyWith
-		this->rows = _matrix_1.rows;
+		this->rows = _matrix_1.rows;		// Плохо работает.
 		this->columns = _matrix_2.columns;
 		this->_storage.swap(_matrix_1._storage);
 		this->multiplyWith(_matrix_2);
@@ -109,23 +113,64 @@ public:
 		if (this->rows == this->columns) { // Вычисляется только для кавдратной матрицы
 			if (this->rows == 2) { // Конечный случай для 2x2 матрицы
 				return (this->_storage[0][0]*this->_storage[1][1]) - (this->_storage[0][1]*this->_storage[1][0]);
-			} else if (this->rows == 1)
+			} else if (this->rows == 1) {
 				return this->_storage[0][0]; // Отдельный случай.
-			else {
+			} else {
 				T determinant = 0;
 				for (uint32_t j = 0; j < this->columns; j++) {
-					if (this->_storage[0][j] == 0) { // Зачем умножать, если это ноль?
-						if (j % 2 == 0) { // Миноры одной строчки.
-							determinant += this->_storage[0][j] * this->submatrixOf(0, j).determinantOf();
-						} else { // Для "четных" элементов произведение элемента и детерминанта его минора складывается и наоборот.
-							determinant -= this->_storage[0][j] * this->submatrixOf(0, j).determinantOf();
-						}
+					 // Зачем умножать, если это ноль?
+					if (this->_storage[0][j] == 0) {
+						continue;
+					}
+					Matrix<T> submatrix = this->submatrixOf(0, j);
+					if (j % 2 == 0) { // Миноры одной строчки.
+						determinant += this->_storage[0][j] * submatrix.determinantOf();
+					} else { // Для "четных" элементов произведение элемента и детерминанта его минора складывается и наоборот.
+						determinant -= this->_storage[0][j] * submatrix.determinantOf();
 					}
 				}
 				return determinant;
 			}
-		} else {
+		}
+		else {
 			throw std::exception(); // Я не знаю, что тут возвращать. Нужен какой-то NONE; сейчас тут throw
+		}
+	}
+	void fillStorage(char mode = 'r', T value = 0, T left_border = 0, T right_border = 10) {
+		switch (mode) {
+			  case 'r': {
+				  if (value == 0) {
+					  std::random_device rd;
+					  static std::mt19937 source(rd());
+				  } else {
+					  static std::mt19937 source(value);
+				  }
+				  if (std::is_floating_point(value)) {
+					  std::uniform_real_distribution<T> distributor(left_border, right_border);
+				  } else {
+					  std::mt19937 source(value);
+					  std::uniform_int_distribution<T> distributor(left_border, right_border);
+				  }
+				  for (uint32_t i = 0; i < this->rows; i++) {
+					  for (uint32_t j = 0; j < this; j++) {
+						  this->_storage[i][j] = distributor(source);
+					  }
+				}
+			} case 'i': {
+				uint32_t i = 0;
+				while (i < this->rows && i < this->columns) {
+					this->_storage[i][i] = 1;
+					i++;
+				}
+			} case 'c': {
+				for (uint32_t i = 0; i < this->rows; i++) {
+					for (uint32_t j = 0; j < this->columns; j++) {
+						this->_storage[i][j] = left_border;
+					}
+				}
+			} default: {
+				std::cerr << "fill mode " << mode << " is not specified" << std::endl;
+			}
 		}
 	}
 };
