@@ -139,36 +139,38 @@ public:
 	void fillStorage(char mode = 'r', T value = 0, T left_border = 0, T right_border = 10) {
 		switch (mode) {
 			  case 'r': {
+				  static std::normal_distribution distributor;
+				  static std::mt19937 source(value);
+				  if (std::is_floating_point<T>())
+					  static auto distributor = std::uniform_real_distribution<T>(left_border, right_border);
+				  else
+					  static auto distributor = std::uniform_int_distribution<T>(left_border, right_border);
 				  if (value == 0) {
-					  std::random_device rd;
-					  static std::mt19937 source(rd());
-				  } else {
-					  static std::mt19937 source(value);
-				  }
-				  if (std::is_floating_point(value)) {
-					  std::uniform_real_distribution<T> distributor(left_border, right_border);
-				  } else {
-					  std::mt19937 source(value);
-					  std::uniform_int_distribution<T> distributor(left_border, right_border);
+					  static std::random_device rd;
+					  static auto source = std::mt19937(rd());
 				  }
 				  for (uint32_t i = 0; i < this->rows; i++) {
-					  for (uint32_t j = 0; j < this; j++) {
+					  for (uint32_t j = 0; j < this->columns; j++) {
 						  this->_storage[i][j] = distributor(source);
 					  }
-				}
+				  }
+				  break;
 			} case 'i': {
 				uint32_t i = 0;
 				while (i < this->rows && i < this->columns) {
 					this->_storage[i][i] = 1;
 					i++;
 				}
+				break;
 			} case 'c': {
 				for (uint32_t i = 0; i < this->rows; i++) {
 					for (uint32_t j = 0; j < this->columns; j++) {
-						this->_storage[i][j] = left_border;
+						this->_storage[i][j] = value;
 					}
 				}
-			} default: {
+				break;
+			}
+			default: {
 				std::cerr << "fill mode " << mode << " is not specified" << std::endl;
 			}
 		}
