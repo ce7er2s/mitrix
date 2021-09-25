@@ -3,4 +3,4 @@ project(untitled)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(testing main.cpp mitrix.cpp mitrix.h)
+add_executable(release main.cpp mitrix.cpp mitrix.h)

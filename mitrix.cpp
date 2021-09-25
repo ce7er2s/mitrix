@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <random>
@@ -71,76 +72,84 @@ public:
 		}
 	}
 
-	void printFormatTo(std::ostream& _ostream = std::cout) {  // АХТУНГ, НЕ ТРОГАТЬ БЛЯТЬ НИКОГДА, Я ВООБЩЕ НЕ ПОНИМАЮ КАК Я ЭТО СДЕЛАЛ
+	void printFormatTo(std::ostream& _ostream = std::cout, char precision = 2) {  // АХТУНГ, НЕ ТРОГАТЬ БЛЯТЬ НИКОГДА, Я ВООБЩЕ НЕ ПОНИМАЮ КАК Я ЭТО СДЕЛАЛ
 		uint32_t max_length = 0; // Максимальная длина ячейки
-		uint32_t element_length; // Длина конкретной ячейки
 		std::string spaces; // Строка для отступа в ячейке
 		std::string dashes; // Строка для горизонтальных символов
 
-
+		std::stringstream stream;
+		stream << std::fixed << std::setprecision(precision);
 		for (uint32_t i = 0; i < this->rows; i++) {  // цикл поиска максимальной длины ячейки
 			for (uint32_t length, j = 0; j < this->columns; j++) {
-				T temp = this->_storage[i][j];
-				length = std::to_string(temp).length(); // Длина записи текущей ячейки
+				stream << this->_storage[i][j];
+				std::string temp = stream.str();
+				stream.str("");
+				length = temp.length(); // Длина записи текущей ячейки
 				if (length > max_length)
 					max_length = length; // Сохранение максимальной ячейки
 			}
 		}
 
 
-		std::cout << "╔";
-		for (uint32_t j = 0; j < this->columns-1; j++) {
+		_ostream << "╔";
+		for (uint32_t j = 1; j < this->columns; j++) {
 			for (uint32_t d = 0; d < max_length + 2; d++)
-				std::cout << "═"; // Печать разделителя строк и крестиков
-			std::cout << "╦";
+				_ostream << "═"; // Печать разделителя строк и крестиков
+			_ostream << "╦";
 		}
 		for (uint32_t d = 0; d < max_length + 2; d++) // последие разделители отдельно (2 потому что отступ в один пробел с двух сторон)
-			std::cout << "═";
-		std::cout << "╗" << std::endl; // Закрывающий разделитель и перевод строки
+			_ostream << "═";
+		_ostream << "╗" << std::endl; // Закрывающий разделитель и перевод строки
 
 
-		for (uint32_t i = 0; i < this->rows-1; i++) {
-			std::cout << "║ ";
+		for (uint32_t i = 1; i < this->rows; i++) {
+			_ostream << "║ ";
 			for (uint32_t j = 0; j < this->columns; j++) {
-				std::string temp = std::to_string(this->_storage[i][j]); 		// Временая переменная элемента массива
+				stream << this->_storage[i-1][j];
+				std::string temp = stream.str();// Временая переменная элемента массива
+				stream.str("");
 				spaces = std::string(max_length - temp.length(), ' ');		// Смещение для печати текущей ячейки
-				std::cout << spaces;											// Печать смещения
-				std::cout << temp;												// Печать значения
-				std::cout << " ║ "; 											// Печать раздителителя
+				_ostream << spaces;											// Печать смещения
+				_ostream << temp;												// Печать значения
+				if (j != (this->columns)-1)
+					_ostream << " ║ "; 											// Печать раздителителя
 			}
-			std::cout << std::endl; // Перевод строки
+			_ostream << " ║" << std::endl; // Перевод строки
 
 
-			std::cout << "╠";  // Разделитель для строк
-			for (uint32_t j = 0; j < this->columns-1; j++) {
+			_ostream << "╠";  // Разделитель для строк
+			for (uint32_t j = 1; j < this->columns; j++) {
 				for (uint32_t d = 0; d < max_length + 2; d++) // (2 потому что отступ в один пробел с двух сторон)
-					std::cout << "═"; // Печать разделителя строк и крестиков
-				std::cout << "╬";
+					_ostream << "═"; // Печать разделителя строк и крестиков
+				_ostream << "╬";
 			}
 			for (uint32_t d = 0; d < max_length + 2; d++) // последие разделители отдельно (2 потому что отступ в один пробел с двух сторон)
-				std::cout << "═";
-			std::cout << "╣" << std::endl; // Закрывающий разделитель и перевод строки
+				_ostream << "═";
+			_ostream << "╣" << std::endl; // Закрывающий разделитель и перевод строки
 		}
 
-		std::cout << "║ ";
+		_ostream << "║ ";  // Печать последней строки
 		for (uint32_t j = 0; j < this->columns; j++) {
-			std::string temp = std::to_string(this->_storage[(this->rows)-1][j]);  // Временая переменная элемента массива
+			stream << this->_storage[(this->rows)-1][j];
+			std::string temp = stream.str();									    // Временая переменная элемента массива
+			stream.str("");
 			spaces = std::string(max_length - temp.length(), ' ');				// Смещение для печати текущей ячейки
-			std::cout << spaces;													// Печать смещения
-			std::cout << temp;														// Печать значения
-			std::cout << " ║ "; 													// Печать раздителителя
+			_ostream << spaces;													// Печать смещения
+			_ostream << temp;														// Печать значения
+			if (j != (this->columns)-1)
+				_ostream << " ║ "; 													// Печать раздителителя
 		}
-		std::cout << std::endl;
+		_ostream << " ║" << std::endl; // печать последнего разделителя
 
-		std::cout << "╚"; // Начало отрисовки дна
-		for (uint32_t j = 0; j < this->columns-1; j++) {
+		_ostream << "╚"; // Начало отрисовки дна
+		for (uint32_t j = 1; j < this->columns; j++) {
 			for (uint32_t d = 0; d < max_length + 2; d++) // (2 потому что отступ в один пробел с двух сторон)
-				std::cout << "═"; // Печать разделителя строк и крестиков
-			std::cout << "╩";
+				_ostream << "═"; // Печать разделителя строк и крестиков
+			_ostream << "╩";
 		}
 		for (uint32_t d = 0; d < max_length + 2; d++) // последие разделители отдельно (2 потому что отступ в один пробел с двух сторон)
-			std::cout << "═";
-		std::cout << "╝" << std::endl; // Закрывающий разделитель и перевод строки
+			_ostream << "═";
+		_ostream << "╝" << std::endl; // Закрывающий разделитель и перевод строки
 	}
 
 	void resizeTo(uint32_t _rows, uint32_t _columns) {
