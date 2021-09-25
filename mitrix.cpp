@@ -3,13 +3,16 @@
 //
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include <random>
 
 template <typename T> class Matrix {
 	uint32_t columns = 0;
 	uint32_t rows = 0;
+public:
 	std::vector<std::vector<T>> _storage;
+	std::string name;
 public:
 	T operator~ () {
 		return this->determinantOf();
@@ -29,7 +32,7 @@ public:
 		this->_storage.swap(_matrix_1._storage);
 		this->multiplyWith(_matrix_2);
 	}
-	
+
 	explicit Matrix(uint32_t _rows = 0, uint32_t _columns = 0, std::vector<std::vector<T>>* _storage = nullptr) {
 		this->columns = _columns;
 		this->rows = _rows;
@@ -66,6 +69,84 @@ public:
 			}
 			_ostream << std::endl;
 		}
+	}
+
+	void printFormatTo(std::ostream& _ostream = std::cout) {  // АХТУНГ, НЕ ТРОГАТЬ БЛЯТЬ НИКОГДА, Я ВООБЩЕ НЕ ПОНИМАЮ КАК Я ЭТО СДЕЛАЛ
+		uint32_t max_length = 0; // Максимальная длина ячейки
+		uint32_t element_length; // Длина конкретной ячейки
+		std::string spaces; // Строка для отступа в ячейке
+		std::string dashes; // Строка для горизонтальных символов
+
+
+		for (uint32_t i = 0; i < this->rows; i++) {  // цикл поиска максимальной длины ячейки
+			for (uint32_t sign, length, j = 0; j < this->columns; j++) {
+				T temp = this->_storage[i][j];
+				sign = temp>0 ? 0 : 1; // Определение смещения для знаковых и беззнаковых значений
+				length = std::to_string(temp).length() + sign; // Длина записи текущей ячейки
+				if (length > max_length)
+					max_length = length; // Сохранение максимальной ячейки
+			}
+		}
+
+
+		std::cout << "╔";
+		for (uint32_t j = 0; j < this->columns-1; j++) {
+			for (uint32_t d = 0; d <= max_length; d++)
+				std::cout << "═"; // Печать разделителя строк и крестиков
+			std::cout << "╦";
+		}
+		for (uint32_t d = 0; d <= max_length; d++) // последие разделители отдельно
+			std::cout << "═";
+		std::cout << "╗" << std::endl; // Закрывающий разделитель и перевод строки
+
+
+		for (uint32_t i = 0; i < this->rows-1; i++) {
+
+			for (uint32_t j = 0; j < this->columns; j++) {
+				std::string temp = std::to_string(this->_storage[i][j]); // Временная переменная элемента массива
+				std::cout << "║"; 				// Печать раздителителя
+				element_length = temp.length(); // Длина текущей ячейки;
+				spaces = std::string(max_length - element_length, ' ');		// Смещение для печати текущей ячейки
+				std::cout << spaces;					// Печать смещения
+				std::cout << temp;		// Печать значения
+				std::cout << ' ';		// Печать значения
+			}
+			std::cout << "║" << std::endl; // Закрывающий раздителитель, перевод строки
+
+
+			std::cout << "╠";  // Разделитель для строк
+			for (uint32_t j = 0; j < this->columns-1; j++) {
+				for (uint32_t d = 0; d <= max_length; d++)
+					std::cout << "═"; // Печать разделителя строк и крестиков
+				std::cout << "╬";
+			}
+			for (uint32_t d = 0; d <= max_length; d++) // последие разделители отдельно
+				std::cout << "═";
+			std::cout << "╣" << std::endl; // Закрывающий разделитель и перевод строки
+		}
+
+
+		for (uint32_t j = 0; j < this->columns; j++) {
+			std::string temp = std::to_string(this->_storage[(this->rows)-1][j]);  // Временная переменная элемента массива
+			std::cout << "║"; 				// Печать раздителителя
+			element_length = temp.length(); // Длина текущей ячейки;
+			spaces = std::string(max_length - element_length, ' ');		// Смещение для печати текущей ячейки
+			std::cout << spaces;					// Печать смещения
+			std::cout << temp;		// Печать значения
+			std::cout << ' '; // Печать отступа
+		}
+		std::cout << "╣" << std::endl;
+
+
+		std::cout << "╚"; // Начало отрисовки дна
+		for (uint32_t j = 0; j < this->columns-1; j++) {
+			for (uint32_t d = 0; d <= max_length; d++)
+				std::cout << "═"; // Печать разделителя строк и крестиков
+			std::cout << "╩";
+		}
+		for (uint32_t d = 0; d <= max_length; d++) // последие разделители отдельно
+			std::cout << "═";
+		std::cout << "╝" << std::endl; // Закрывающий разделитель и перевод строки
 	}
 
 	void resizeTo(uint32_t _rows, uint32_t _columns) {
@@ -139,15 +220,12 @@ public:
 	void fillStorage(char mode = 'r', T value = 0, T left_border = 0, T right_border = 10) {
 		switch (mode) {
 			  case 'r': {
-				  static std::normal_distribution distributor;
-				  static std::mt19937 source(value);
-				  if (std::is_floating_point<T>())
-					  static auto distributor = std::uniform_real_distribution<T>(left_border, right_border);
-				  else
-					  static auto distributor = std::uniform_int_distribution<T>(left_border, right_border);
+				  //static std::normal_distribution distributor;
+				  std::mt19937 source(value);
+				  auto distributor = std::uniform_int_distribution<T>(left_border, right_border);
 				  if (value == 0) {
-					  static std::random_device rd;
-					  static auto source = std::mt19937(rd());
+					  std::random_device rd;
+					  source = std::mt19937(rd());
 				  }
 				  for (uint32_t i = 0; i < this->rows; i++) {
 					  for (uint32_t j = 0; j < this->columns; j++) {
