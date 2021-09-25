@@ -90,7 +90,6 @@ public:
 			}
 		}
 
-
 		_ostream << "╔";
 		for (uint32_t j = 1; j < this->columns; j++) {
 			for (uint32_t d = 0; d < max_length + 2; d++)
@@ -225,7 +224,7 @@ public:
 			  case 'r': {
 				  //static std::normal_distribution distributor;
 				  std::mt19937 source(value);
-				  auto distributor = std::uniform_real_distribution<T>(left_border, right_border);
+				  auto distributor = std::uniform_int_distribution<T>(left_border, right_border);
 				  if (value == 0) {
 					  std::random_device rd;
 					  source = std::mt19937(rd());
