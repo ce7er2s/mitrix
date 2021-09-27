@@ -9,9 +9,9 @@
 #include <random>
 
 template <typename T> class Matrix {
+public:
 	uint32_t columns = 0;
 	uint32_t rows = 0;
-public:
 	std::vector<std::vector<T>> _storage;
 	std::string name;
 public:
@@ -47,6 +47,10 @@ public:
 	}
 
 	void inputFrom(std::istream& _istream = std::cin, uint32_t _rows = 0, uint32_t _columns = 0) {
+		if (_rows == 0 && _columns == 0) {
+			_istream >> _rows;
+			_istream >> _columns;
+		}
 		if (_rows != 0 || _columns != 0) {
 			if (_rows == 0)        // _stream это ссылка на поток ввода (std::ifstream легко кастуется в std::istream)
 				_rows = this->rows;        // Если хотя бы один размер матрицы ненулевой, ее размеры меняются
@@ -175,6 +179,7 @@ public:
 		}
 		return temp;
 	}
+
 	void multiplyWith(Matrix& _matrix) {
 		std::vector<std::vector<T>> temp;
 		uint32_t size = _matrix.rows;
@@ -192,6 +197,7 @@ public:
 		this->_storage.swap(temp);
 		this->columns = temp_columns; // Сам
 	}
+
 	T determinantOf() {
 		if (this->rows == this->columns) { // Вычисляется только для кавдратной матрицы
 			if (this->rows == 2) { // Конечный случай для 2x2 матрицы
@@ -219,12 +225,13 @@ public:
 			throw std::exception(); // Я не знаю, что тут возвращать. Нужен какой-то NONE; сейчас тут throw
 		}
 	}
+
 	void fillStorage(char mode = 'r', T value = 0, T left_border = 0, T right_border = 10) {
 		switch (mode) {
 			  case 'r': {
 				  //static std::normal_distribution distributor;
 				  std::mt19937 source(value);
-				  auto distributor = std::uniform_int_distribution<T>(left_border, right_border);
+				  auto distributor = std::uniform_real_distribution<T>(left_border, right_border);
 				  if (value == 0) {
 					  std::random_device rd;
 					  source = std::mt19937(rd());
