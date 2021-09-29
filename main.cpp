@@ -33,7 +33,7 @@ static std::map<std::string, int> commands = {
 	}
 }
 
-int main() { // TODO: Вынести сервисные функции в service.cpp
+int main() { /*// TODO: Вынести сервисные функции в service.cpp
 	bool _exit = true;
 	while (_exit) {
 		std::time_t timestamp = std::time(nullptr);
@@ -63,7 +63,11 @@ int main() { // TODO: Вынести сервисные функции в servic
 		}
 		std::istream *_istream = &std::cin;
 		std::ostream *_ostream = &std::cout;
-	}
+	}*/
+	auto matrix = Matrix<double>(5, 5);
+	matrix.fillStorage('r', 0, -100, 100);
+	matrix.printFormatTo();
+	matrix[1][1];
 }
 
 // mitrix-cli

@@ -42,7 +42,7 @@ public:
 			for (size_t i = 0; i < rows; i++)
 				this->_storage[i].resize(this->columns);
 		} else {
-			this->_storage = *_storage; // запись при наличии готового массива. Полезно при копировании матрицы.
+			this->_storage.swap(*_storage); // запись при наличии готового массива. Полезно при копировании матрицы.
 		}								// здесь добавить функцию get_storage c копированием массива для этого случая.
 	}
 
