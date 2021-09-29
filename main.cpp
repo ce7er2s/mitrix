@@ -6,7 +6,7 @@
 #include <ctime>
 
 
-#include "mitrix.h"  // TODO: разнести объявление и имплементацию Matrix
+#include "mitrix.h"/*  // TODO: разнести объявление и имплементацию Matrix
 static std::vector<Matrix<float>> matrix_set(10);
 static std::map<std::string, int> commands = {
 		{"list", 1}
@@ -31,9 +31,9 @@ static std::map<std::string, int> commands = {
 			}
 		}
 	}
-}
+}*/
 
-int main() { /*// TODO: Вынести сервисные функции в service.cpp
+int main() { /* TODO: Вынести сервисные функции в service.cpp
 	bool _exit = true;
 	while (_exit) {
 		std::time_t timestamp = std::time(nullptr);
@@ -64,10 +64,14 @@ int main() { /*// TODO: Вынести сервисные функции в serv
 		std::istream *_istream = &std::cin;
 		std::ostream *_ostream = &std::cout;
 	}*/
-	auto matrix = Matrix<double>(5, 5);
-	matrix.fillStorage('r', 0, -100, 100);
-	matrix.printFormatTo();
-	matrix[1][1];
+	Matrix<double> matrix1(5, 5);
+	Matrix<double> matrix2(5, 5);
+	matrix1.fillStorage('i', 0, -100, 100);
+	matrix2.fillStorage('r', 0, -100, 100);
+	Matrix<double> matrix3(matrix1, matrix2);
+	matrix1.printFormatTo();
+	matrix2.printFormatTo();
+	matrix3.printFormatTo();
 }
 
 // mitrix-cli
