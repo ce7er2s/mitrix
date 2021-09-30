@@ -1,6 +1,10 @@
 //
 // Created by reenie on 22.09.2021.
 //
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <random>
 
 template <typename T> T Matrix<T>::operator~() {
 	return this->determinantOf();
@@ -218,7 +222,6 @@ template <typename T> T Matrix<T>::determinantOf() {
 template <typename T> void Matrix<T>::fillStorage(char mode, T value, T left_border, T right_border) {
 	switch (mode) {
 		case 'r': {
-			//static std::normal_distribution distributor;
 			std::mt19937 source(value);
 			auto distributor = std::uniform_real_distribution<T>(left_border, right_border);
 			if (value == 0) {
