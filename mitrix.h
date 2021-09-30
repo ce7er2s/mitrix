@@ -9,7 +9,7 @@ public:
 	uint32_t columns = 0;
 	uint32_t rows = 0;
 	std::vector<std::vector<T>> _storage;
-	std::string name;
+	std::wstring name;
 public:
 	T operator~ ();
 	std::vector<T> operator[] (int32_t n);

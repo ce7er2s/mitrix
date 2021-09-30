@@ -14,7 +14,7 @@
 namespace Handlers {
 	template <typename T> int ListHandler(
 			const std::vector<Matrix<T>> &matrix_set,
-			std::ostream &ostream = std::cout  // при манипуляциях с потоком нельзя использовать const
+			std::basic_ostream<wchar_t> &ostream = std::wcout  // при манипуляциях с потоком нельзя использовать const
 			);
 
 	template <typename T> int InputHandler(

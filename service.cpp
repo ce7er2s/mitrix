@@ -4,7 +4,7 @@
 
 template <typename T> int Handlers::ListHandler(
 		const std::vector<Matrix<T>> &matrix_set,
-		std::ostream &ostream ) { // при манипуляциях с потоком нельзя использовать const
+		std::basic_ostream<wchar_t> &ostream) { // при манипуляциях с потоком нельзя использовать const
 	ostream << std::setw(2) << "#" << "|";
 	ostream << std::setw(5) << "ROWS" << "|";
 	ostream << std::setw(8) << "COLUMNS" << "|";
@@ -16,7 +16,7 @@ template <typename T> int Handlers::ListHandler(
 	ostream << std::setw(5) << "" << "+";
 	ostream << std::setw(8) << "" << "+";
 	ostream << std::setw(14) << "" << "+";
-	ostream << std::setw(5) << "" << std::endl;
+	ostream << std::setw(16) << "" << std::endl;
 	ostream.fill(' ');
 	uint32_t i = 1;
 	for (Matrix<T> matrix: matrix_set) {
@@ -25,8 +25,8 @@ template <typename T> int Handlers::ListHandler(
 		ostream << std::setw(8) << matrix.columns << "|";
 		ostream << std::setw(8) << sizeof(T) * matrix.rows * matrix.columns << std::setw(6) << "bytes" << "|";
 		ostream << " " << std::left;
-		if (matrix.name != "") {
-			ostream << std::setw(matrix.name.length());
+		if (!matrix.name.empty()) {
+			ostream << std::setw(matrix.name.length() + 1);
 			ostream << matrix.name << std::endl;
 		}
 		else {
