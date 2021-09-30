@@ -6,6 +6,7 @@
 typedef double MATRIX_T;
 
 int main() { // TODO: Вынести сервисные функции в service.cpp
+	setlocale(LC_CTYPE, "");
 	std::wfstream output("output.txt");
 	std::vector<Matrix<MATRIX_T>> matrix_set(10);
 	for (Matrix<MATRIX_T> &matrix: matrix_set) {

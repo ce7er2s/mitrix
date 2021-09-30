@@ -5,35 +5,35 @@
 template <typename T> int Handlers::ListHandler(
 		const std::vector<Matrix<T>> &matrix_set,
 		std::basic_ostream<wchar_t> &ostream) { // при манипуляциях с потоком нельзя использовать const
-	ostream << std::setw(2) << "#" << "|";
-	ostream << std::setw(5) << "ROWS" << "|";
-	ostream << std::setw(8) << "COLUMNS" << "|";
-	ostream << std::setw(14) << "STORAGE" << "|";
-	ostream << std::setw(5) << "NAME" << std::endl;
+	ostream << std::setw(2) << L"#" << "|";
+	ostream << std::setw(6) << L"РЯДОВ" << "|";
+	ostream << std::setw(9) << L"СТОЛБЦОВ" << "|";
+	ostream << std::setw(14) << L"ЗАНИМАЕТ" << "|";
+	ostream << std::setw(4) << L"ИМЯ" << std::endl;
 	ostream.width(28);
 	ostream.fill('-');
 	ostream << std::setw(2) << "" << "+";
-	ostream << std::setw(5) << "" << "+";
-	ostream << std::setw(8) << "" << "+";
+	ostream << std::setw(6) << "" << "+";
+	ostream << std::setw(9) << "" << "+";
 	ostream << std::setw(14) << "" << "+";
 	ostream << std::setw(16) << "" << std::endl;
 	ostream.fill(' ');
 	uint32_t i = 1;
 	for (Matrix<T> matrix: matrix_set) {
 		ostream << std::setw(2) << i++ << "|";
-		ostream << std::setw(5) << matrix.rows << "|";
-		ostream << std::setw(8) << matrix.columns << "|";
-		ostream << std::setw(8) << sizeof(T) * matrix.rows * matrix.columns << std::setw(6) << "bytes" << "|";
-		ostream << " " << std::left;
+		ostream << std::setw(6) << matrix.rows << "|";
+		ostream << std::setw(9) << matrix.columns << "|";
+		ostream << std::setw(9) << sizeof(T) * matrix.rows * matrix.columns << std::setw(5) << L"байт" << "|";
 		if (!matrix.name.empty()) {
+			ostream << std::left;
 			ostream << std::setw(matrix.name.length() + 1);
 			ostream << matrix.name << std::endl;
+			ostream << std::right;
 		}
 		else {
 			ostream << std::setw(4);
-			ostream << "NONE" << std::endl;
+			ostream << L"НЕТ" << std::endl;
 		}
-		ostream << std::right;
 	}
 	return 0;
 }
