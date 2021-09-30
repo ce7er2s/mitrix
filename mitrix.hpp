@@ -148,13 +148,13 @@ template <typename T> void Matrix<T>::printFormatTo(std::ostream& _ostream, char
 }
 
 template <typename T> void Matrix<T>::resizeTo(uint32_t _rows, uint32_t _columns) {
+	this->rows = _rows; // Запись размеров
+	this->columns = _columns;
+	this->_storage.resize(_rows); // Изменение размера самого _storage
 	for (uint32_t i = 0; i < this->rows; i++) {
 		for (uint32_t j = 0; j < this->columns; j++)
 			this->_storage[i].resize(_columns); // Изменение размера внутренних массивов _storage
 	}
-	this->_storage.resize(_rows); // Изменение размера самого _storage
-	this->rows = _rows; // Запись размеров
-	this->columns = _columns;
 }
 
 template <typename T> Matrix<T> Matrix<T>::submatrixOf (uint32_t _row, uint32_t _column) {

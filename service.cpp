@@ -8,27 +8,31 @@ template <typename T> int Handlers::ListHandler(
 	ostream << std::setw(2) << "#" << "|";
 	ostream << std::setw(5) << "ROWS" << "|";
 	ostream << std::setw(8) << "COLUMNS" << "|";
-	ostream << std::setw(8) << "STORAGE" << "|";
+	ostream << std::setw(14) << "STORAGE" << "|";
 	ostream << std::setw(5) << "NAME" << std::endl;
 	ostream.width(28);
 	ostream.fill('-');
 	ostream << std::setw(2) << "" << "+";
 	ostream << std::setw(5) << "" << "+";
 	ostream << std::setw(8) << "" << "+";
-	ostream << std::setw(8) << "" << "+";
+	ostream << std::setw(14) << "" << "+";
 	ostream << std::setw(5) << "" << std::endl;
 	ostream.fill(' ');
 	uint32_t i = 1;
-	for (auto matrix: matrix_set) {
+	for (Matrix<T> matrix: matrix_set) {
 		ostream << std::setw(2) << i++ << "|";
 		ostream << std::setw(5) << matrix.rows << "|";
 		ostream << std::setw(8) << matrix.columns << "|";
-		ostream << std::setw(8) << sizeof(matrix._storage) << "|";
-		ostream << " " << std::left << std::setw(5);
-		if (matrix.name != "")
+		ostream << std::setw(8) << sizeof(T) * matrix.rows * matrix.columns << std::setw(6) << "bytes" << "|";
+		ostream << " " << std::left;
+		if (matrix.name != "") {
+			ostream << std::setw(matrix.name.length());
 			ostream << matrix.name << std::endl;
-		else
+		}
+		else {
+			ostream << std::setw(4);
 			ostream << "NONE" << std::endl;
+		}
 		ostream << std::right;
 	}
 	return 0;
