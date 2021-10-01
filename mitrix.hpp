@@ -152,8 +152,7 @@ template <typename T> void Matrix<T>::resizeTo(uint32_t _rows, uint32_t _columns
 	this->columns = _columns;
 	this->_storage.resize(_rows); // Изменение размера самого _storage
 	for (uint32_t i = 0; i < this->rows; i++) {
-		for (uint32_t j = 0; j < this->columns; j++)
-			this->_storage[i].resize(_columns); // Изменение размера внутренних массивов _storage
+		this->_storage[i].resize(_columns); // Изменение размера внутренних массивов _storage
 	}
 }
 

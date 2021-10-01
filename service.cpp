@@ -6,8 +6,9 @@ enum ERRORS {
 	OK = 0,
 	NEGATIVE_ARG = 1,
 	FILE_NOT_FOUND = 2,
-	ZERO_LENGTH = 3
-
+	ZERO_LENGTH = 3,
+	NO_DETERMINANT = 4,
+	MULTIPLICATION_IMPOSSIBLE = 5
 };
 
 template <typename T> int Handlers::ListHandler(
@@ -61,7 +62,7 @@ template <typename T> int Handlers::InputHandler(
 	}
 	for (uint32_t i = 0; i < rows; i++) {
 		for (uint32_t j = 0; j < columns; j++) {
-			istream >> matrix[i][j];
+			istream >> matrix._storage[i][j];
 		}
 	}
 	return OK;
@@ -94,39 +95,43 @@ template <typename T> int Handlers::FormatOutputHandler(
 	size_t element_size = 0;  // Для правильной конвертации таблицы нужны размеры точные
 	size_t row_numbers_size = std::to_string(matrix._storage.size()).length();
 	size_t columns_numbers_size = std::to_string(matrix._storage[0].size()).length();
+	std::basic_stringstream<wchar_t> printer;
+	printer << std::setprecision(precision) << std::fixed;
 
 	for (std::vector<T> row: matrix._storage) {  // Поиск максимально длинного элемента
 		for (T element: row) {
-			element_size = std::max(element_size, std::to_wstring(element).length());
+			printer << element;
+			element_size = std::max(element_size, printer.str().length());
+			printer.str(L"");
 		}
 		columns_numbers_size = std::max(columns_numbers_size, std::to_wstring(row.size()).length());
 	}
 
 	element_size = std::max(element_size, std::max(row_numbers_size, columns_numbers_size));  // Поиск наибольшего
-	auto cell_size = static_cast<int32_t>(element_size);                                      // И его общая запись
-
+	auto cell_size = static_cast<int32_t>(element_size) + 1;                                  // И его общая запись
+	// +1 для отступа.
 	ostream << std::fixed << std::setprecision(std::min(precision,static_cast<u_char>(cell_size)));
 
 	ostream << std::setw(cell_size) << "";
-	for (uint32_t i = 1; i < matrix.rows; i++) {  // Отрисовка шапки с индексами:   1|  2|  3|
-		ostream << "|" << std::setw(cell_size) << i;
+	for (uint32_t i = 1; i < matrix.columns; i++) {  // Отрисовка шапки с индексами: 1| 2| 3|
+		ostream << " |" << std::setw(cell_size) << i;
 	}
-	ostream << std::setw(cell_size) << matrix.columns << std::endl;
+	ostream << " |" << std::setw(cell_size) << matrix.columns << std::endl;
 
 	for (uint32_t i = 0; i < matrix.rows; i++) {  // Отрисовка полоски и рядов. Одна итерация -- полоска и ряд элементов
 
-		ostream.fill('-');
-		ostream << std::setw(cell_size) << "";  // Отрисовка полосок
-		for (uint32_t j = 0; j < matrix.columns; j++) {
-			ostream << '+' << std::setw(cell_size) << "";
-		}
+		ostream.fill('-'); // Отрисовка полосок
+		ostream << std::setw(cell_size+1) << "";
+		for (uint32_t j = 0; j < matrix.columns-1; j++)
+			ostream << '+' << std::setw(cell_size+1) << "";
+		ostream << "+" << std::setw(cell_size) << "";
 		ostream.fill(' ');
 		ostream << std::endl;
 
-		ostream << std::setw(cell_size) << i+1 << "|";  // Отрисовка элементов
+		ostream << std::setw(cell_size) << i+1 << " |";  // Отрисовка элементов
 		ostream << std::setw(cell_size) << matrix[i][0];
 		for (uint32_t j = 1; j < matrix.columns; j++) {
-			ostream << "|" << std::setw(cell_size) << matrix[i][j];
+			ostream << " |" << std::setw(cell_size) << matrix[i][j];
 		}
 		ostream << std::endl;
 	}
@@ -134,22 +139,35 @@ template <typename T> int Handlers::FormatOutputHandler(
 }
 
 template <typename T> int Handlers::MatrixMultiplicationHandler(
-		const std::vector<Matrix<T>> &matrix1,
-		const std::vector<Matrix<T>> &matrix2,
-		std::vector<Matrix<T>> &matrix3,
-		const std::ofstream& ofstream) {
+		Matrix<T> &matrix1,
+		Matrix<T> &matrix2,
+		Matrix<T> &matrix3,
+		std::basic_ostream<wchar_t>& ostream) {
+	if (matrix1.columns != matrix2.rows) {
+		return MULTIPLICATION_IMPOSSIBLE;
+	}
+	matrix3 = Matrix<T>(matrix1, matrix2);
 	return 0;
 }
 
 template <typename T> int Handlers::MatrixSelfMultiplicationHandler(
-		const std::vector<Matrix<T>> &matrix1,
-		std::vector<Matrix<T>> &matrix2,
-		const std::ofstream& ofstream) {
+		Matrix<T> &matrix1,
+		Matrix<T> &matrix2,
+		std::basic_ostream<wchar_t>& ostream) {
+	if (matrix1.columns != matrix2.rows) {
+		return MULTIPLICATION_IMPOSSIBLE;
+	}
+	matrix1.multiplyWith(matrix2);
+	ostream << "Successful!";
 	return 0;
 }
 
 template <typename T> int Handlers::DeterminantHandler(
-		const std::vector<Matrix<T>> &matrix,
-		const std::ofstream& ofstream) {
+		Matrix<T> &matrix,
+		std::basic_ostream<wchar_t>& ostream) {
+	if (matrix.rows != matrix.columns) {
+		return NO_DETERMINANT;
+	}
+	ostream << "Determinant is " << matrix.determinantOf() << ".";
 	return 0;
 }

@@ -19,8 +19,8 @@ namespace Handlers {
 
 	template <typename T> int InputHandler(
 			Matrix<T> &matrix,
-			uint32_t rows,
-			uint32_t column,
+			uint32_t rows = 0,
+			uint32_t columns = 0,
 			std::basic_istream<wchar_t>& istream = std::wcin
 			);
 
@@ -36,21 +36,21 @@ namespace Handlers {
 			);
 
 	template <typename T> int MatrixMultiplicationHandler(
-			const std::vector<Matrix<T>> &matrix1,
-			const std::vector<Matrix<T>> &matrix2,
-			std::vector<Matrix<T>> &matrix3,
-			const std::ofstream& ofstream
+			Matrix<T> &matrix1,
+			Matrix<T> &matrix2,
+			Matrix<T> &matrix3,
+			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
 	template <typename T> int MatrixSelfMultiplicationHandler(
-			const std::vector<Matrix<T>> &matrix1,
-			std::vector<Matrix<T>> &matrix2,
-			const std::ofstream& ofstream
+			Matrix<T> &matrix1,
+			Matrix<T> &matrix2,
+			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
 	template <typename T> int DeterminantHandler(
-			const std::vector<Matrix<T>> &matrix,
-			const std::ofstream& ofstream
+			Matrix<T> &matrix,
+			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 }
 
