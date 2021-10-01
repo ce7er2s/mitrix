@@ -2,6 +2,14 @@
 // Created by reenie on 27.09.2021.
 //
 
+enum ERRORS {
+	OK = 0,
+	NEGATIVE_ARG = 1,
+	FILE_NOT_FOUND = 2,
+	ZERO_LENGTH = 3
+
+};
+
 template <typename T> int Handlers::ListHandler(
 		const std::vector<Matrix<T>> &matrix_set,
 		std::basic_ostream<wchar_t> &ostream) { // при манипуляциях с потоком нельзя использовать const
@@ -40,14 +48,38 @@ template <typename T> int Handlers::ListHandler(
 
 template <typename T> int Handlers::InputHandler(
 		Matrix<T> &matrix,
-		const std::ifstream& ifstream) {
-	return 0;
+		std::basic_istream<wchar_t>& istream,
+		uint32_t rows,
+		uint32_t columns) {
+	if (rows < 0 || columns < 0) {
+		return NEGATIVE_ARG;
+	} else if (rows == 0 || columns == 0) {
+		istream >> rows;
+		istream >> columns;
+		matrix.resizeTo(rows, columns);
+	}
+	for (uint32_t i = 0; i < rows; i++) {
+		for (uint32_t j = 0; j < columns; j++) {
+			istream >> matrix[i][j];
+		}
+	}
+	return OK;
+
 }
 
 template <typename T> int Handlers::OutputHandler(
 		const Matrix<T> &matrix,
-		const std::ofstream& ofstream) {
-	return 0;
+		std::basic_ostream<wchar_t>& ostream) {
+	if (matrix.rows == 0 || matrix.columns == 0) {
+		return ZERO_LENGTH;
+	}
+	ostream << matrix.rows << " " << matrix.columns;
+	for (uint32_t i = 0; i < matrix.rows; i++) {
+		for (uint32_t j = 0; j < matrix.columns - 1; j++) {
+			ostream << matrix[i][j] << " ";
+		}
+		ostream << matrix[i][matrix.columns-1] << std::endl;
+	}
 }
 
 template <typename T> int Handlers::FormatOutputHandler(

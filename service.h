@@ -19,12 +19,14 @@ namespace Handlers {
 
 	template <typename T> int InputHandler(
 			Matrix<T> &matrix,
-			const std::ifstream& ifstream
+			std::basic_istream<wchar_t>& istream,
+			uint32_t rows,
+			uint32_t column
 			);
 
 	template <typename T> int OutputHandler(
 			const Matrix<T> &matrix,
-			const std::ofstream& ofstream
+			std::basic_ostream<wchar_t>& ostream
 			);
 
 	template <typename T> int FormatOutputHandler(
