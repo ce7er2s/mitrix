@@ -11,9 +11,9 @@ int main() { // TODO: Вынести сервисные функции в servic
 	std::vector<Matrix<MATRIX_T>> matrix_set(10);
 	for (Matrix<MATRIX_T> &matrix: matrix_set) {
 		matrix.resizeTo(10, 10);
-		matrix.fillStorage('r', 0, -10, 10);
+		matrix.fillStorage('i', 0, -10, 10);
 	}
-	Handlers::ListHandler<MATRIX_T>(matrix_set);
+	Handlers::FormatOutputHandler<MATRIX_T>(matrix_set[0], std::wcout, 1);
 }
 
 // mitrix-cli
