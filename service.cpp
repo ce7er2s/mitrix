@@ -92,43 +92,44 @@ template <typename T> int Handlers::FormatOutputHandler(
 		return ZERO_LENGTH;
 	}
 
-	size_t element_size = 0;  // Для правильной конвертации таблицы нужны размеры точные
-	size_t row_numbers_size = std::to_string(matrix._storage.size()).length();
-	size_t columns_numbers_size = std::to_string(matrix._storage[0].size()).length();
+	size_t element_max_size = 0;  // Для правильной конвертации таблицы нужны размеры точные
+	size_t row_max_size = std::to_string(matrix._storage.size()).length();
+	size_t columns_max_size = std::to_string(matrix._storage[0].size()).length();
 	std::basic_stringstream<wchar_t> printer;
 	printer << std::setprecision(precision) << std::fixed;
 
 	for (std::vector<T> row: matrix._storage) {  // Поиск максимально длинного элемента
 		for (T element: row) {
 			printer << element;
-			element_size = std::max(element_size, printer.str().length());
+			element_max_size = std::max(element_max_size, printer.str().length());
 			printer.str(L"");
 		}
-		columns_numbers_size = std::max(columns_numbers_size, std::to_wstring(row.size()).length());
+		columns_max_size = std::max(columns_max_size, std::to_wstring(row.size()).length());
 	}
 
-	element_size = std::max(element_size, std::max(row_numbers_size, columns_numbers_size));  // Поиск наибольшего
-	auto cell_size = static_cast<int32_t>(element_size) + 1;                                  // И его общая запись
+	element_max_size = std::max(element_max_size, columns_max_size);  // Поиск наибольшего
+	auto cell_size = static_cast<int32_t>(element_max_size) + 1;                                  // И его общая запись
+	auto rows_size = static_cast<u_char>(columns_max_size) + 1;
 	// +1 для отступа.
-	ostream << std::fixed << std::setprecision(std::min(precision,static_cast<u_char>(cell_size)));
+	ostream << std::fixed << std::setprecision(precision);
 
-	ostream << std::setw(cell_size) << "";
-	for (uint32_t i = 1; i < matrix.columns; i++) {  // Отрисовка шапки с индексами: 1| 2| 3|
-		ostream << " |" << std::setw(cell_size) << i;
+	ostream << std::setw(rows_size) << "";
+	for (uint32_t i = 0; i < matrix.columns; i++) {  // Отрисовка шапки с индексами: 1| 2| 3|
+		ostream << " |" << std::setw(cell_size) << i+1;
 	}
-	ostream << " |" << std::setw(cell_size) << matrix.columns << std::endl;
+	ostream << std::endl;
 
 	for (uint32_t i = 0; i < matrix.rows; i++) {  // Отрисовка полоски и рядов. Одна итерация -- полоска и ряд элементов
 
 		ostream.fill('-'); // Отрисовка полосок
-		ostream << std::setw(cell_size+1) << "";
+		ostream << std::setw(rows_size+1) << "";
 		for (uint32_t j = 0; j < matrix.columns-1; j++)
 			ostream << '+' << std::setw(cell_size+1) << "";
 		ostream << "+" << std::setw(cell_size) << "";
 		ostream.fill(' ');
 		ostream << std::endl;
 
-		ostream << std::setw(cell_size) << i+1 << " |";  // Отрисовка элементов
+		ostream << std::setw(rows_size) << i+1 << " |";  // Отрисовка элементов
 		ostream << std::setw(cell_size) << matrix[i][0];
 		for (uint32_t j = 1; j < matrix.columns; j++) {
 			ostream << " |" << std::setw(cell_size) << matrix[i][j];
