@@ -29,11 +29,10 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 		ch = std::tolower(ch);
 	int command_code = commandMapping[command];
 
-	int exitCode = 0;  // Код возврата.
 	try {
 		switch (command_code) {
 			case 1: {
-				exitCode = Handlers::ListHandler(matrixSet, ostream);  // Вывод списка матриц.
+				Handlers::ListHandler(matrixSet, ostream);  // Вывод списка матриц.
 				break;
 			}
 			case 2: {
@@ -43,7 +42,7 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 					precision = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
 				else
 					precision = 4; // Значение точности по умолчанию
-				exitCode = Handlers::FormatOutputHandler(matrixSet[index], ostream, precision);
+				Handlers::FormatOutputHandler(matrixSet[index], ostream, precision);
 				break;									// Форматированный вывод матрицы
 			}
 			case 3: {int32_t rows = 0;
@@ -56,7 +55,8 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 					rows = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
 				if (!args[3].empty())
 					columns = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
-				exitCode = Handlers::InputHandler(matrixSet[index], rows, columns, istream);
+				Handlers::InputHandler(matrixSet[index], rows, columns, istream);
+				ostream << std::endl;
 				break;
 			}
 			case 4: {
@@ -71,11 +71,6 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 			default:
 				ostream << L"WRONG COMMAND \"" << command << "\"." << std::endl;
 		}
-
-		if (exitCode != 0) { //  Обработка исключений хендлеров
-			throw exitCode; // NOLINT(misc-throw-by-value-catch-by-reference)
-		}
-
 	} catch (const std::invalid_argument &invalidArgument) {
 		ostream << "WRONG ARGUMENT in command: \"" << str_to_parse << "\"." << std::endl;
 	} catch (const std::exception &unknownException) {

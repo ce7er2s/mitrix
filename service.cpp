@@ -11,7 +11,7 @@ enum ERRORS {
 	MULTIPLICATION_IMPOSSIBLE = 5
 };
 
-template <typename T> int Handlers::ListHandler(
+template <typename T> void Handlers::ListHandler(
 		const std::vector<Matrix<T>> &matrix_set,
 		std::basic_ostream<wchar_t> &ostream) { // при манипуляциях с потоком нельзя использовать const
 	ostream << std::setw(2) << L"#" << "|";
@@ -44,17 +44,16 @@ template <typename T> int Handlers::ListHandler(
 			ostream << L"NONE" << std::endl;
 		}
 	}
-	return 0;
 }
 
-template <typename T> int Handlers::InputHandler(
+template <typename T> void Handlers::InputHandler(
 		Matrix<T> &matrix,
 		uint32_t rows,
 		uint32_t columns,
 		std::basic_istream<wchar_t>& istream
 		) {
 	if (rows < 0 || columns < 0) {
-		return NEGATIVE_ARG;
+		throw NEGATIVE_ARG;
 	} else if (rows == 0 || columns == 0) {
 		istream >> rows;
 		istream >> columns;
@@ -65,15 +64,13 @@ template <typename T> int Handlers::InputHandler(
 			istream >> matrix._storage[i][j];
 		}
 	}
-	return OK;
-
 }
 
-template <typename T> int Handlers::OutputHandler(
+template <typename T> void Handlers::OutputHandler(
 		Matrix<T> &matrix,
 		std::basic_ostream<wchar_t>& ostream) {
 	if (matrix.rows == 0 || matrix.columns == 0) {
-		return ZERO_LENGTH;
+		throw ZERO_LENGTH;
 	}
 	ostream << matrix.rows << " " << matrix.columns << std::endl;
 	for (uint32_t i = 0; i < matrix.rows; i++) {
@@ -84,12 +81,12 @@ template <typename T> int Handlers::OutputHandler(
 	}
 }
 
-template <typename T> int Handlers::FormatOutputHandler(
+template <typename T> void Handlers::FormatOutputHandler(
 		Matrix<T> &matrix,
 		std::basic_ostream<wchar_t>& ostream,
 		u_char precision) {
 	if (matrix.rows == 0 || matrix.columns == 0) { // проверка на нулевую длину
-		return ZERO_LENGTH;
+		throw ZERO_LENGTH;
 	}
 
 	size_t element_max_size = 0;  // Для правильной конвертации таблицы нужны размеры точные
@@ -136,39 +133,35 @@ template <typename T> int Handlers::FormatOutputHandler(
 		}
 		ostream << std::endl;
 	}
-	return 0;
 }
 
-template <typename T> int Handlers::MatrixMultiplicationHandler(
+template <typename T> void Handlers::MatrixMultiplicationHandler(
 		Matrix<T> &matrix1,
 		Matrix<T> &matrix2,
 		Matrix<T> &matrix3,
 		std::basic_ostream<wchar_t>& ostream) {
 	if (matrix1.columns != matrix2.rows) {
-		return MULTIPLICATION_IMPOSSIBLE;
+		throw MULTIPLICATION_IMPOSSIBLE;
 	}
 	matrix3 = Matrix<T>(matrix1, matrix2);
-	return 0;
 }
 
-template <typename T> int Handlers::MatrixSelfMultiplicationHandler(
+template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
 		Matrix<T> &matrix1,
 		Matrix<T> &matrix2,
 		std::basic_ostream<wchar_t>& ostream) {
 	if (matrix1.columns != matrix2.rows) {
-		return MULTIPLICATION_IMPOSSIBLE;
+		throw MULTIPLICATION_IMPOSSIBLE;
 	}
 	matrix1.multiplyWith(matrix2);
 	ostream << "Successful!";
-	return 0;
 }
 
-template <typename T> int Handlers::DeterminantHandler(
+template <typename T> void Handlers::DeterminantHandler(
 		Matrix<T> &matrix,
 		std::basic_ostream<wchar_t>& ostream) {
 	if (matrix.rows != matrix.columns) {
-		return NO_DETERMINANT;
+		throw NO_DETERMINANT;
 	}
 	ostream << "Determinant is " << matrix.determinantOf() << ".";
-	return 0;
 }

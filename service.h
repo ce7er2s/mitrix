@@ -12,43 +12,43 @@
 #include <iomanip>
 
 namespace Handlers {
-	template <typename T> int ListHandler(
+	template <typename T> void ListHandler(
 			const std::vector<Matrix<T>> &matrix_set,
 			std::basic_ostream<wchar_t> &ostream = std::wcout  // при манипуляциях с потоком нельзя использовать const
 			);
 
-	template <typename T> int InputHandler(
+	template <typename T> void InputHandler(
 			Matrix<T> &matrix,
 			uint32_t rows = 0,
 			uint32_t columns = 0,
 			std::basic_istream<wchar_t>& istream = std::wcin
 			);
 
-	template <typename T> int OutputHandler(
+	template <typename T> void OutputHandler(
 			Matrix<T> &matrix,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
-	template <typename T> int FormatOutputHandler(
+	template <typename T> void FormatOutputHandler(
 			Matrix<T> &matrix,
 			std::basic_ostream<wchar_t>& ostream = std::wcout,
 			u_char precision = 4
 			);
 
-	template <typename T> int MatrixMultiplicationHandler(
+	template <typename T> void MatrixMultiplicationHandler(
 			Matrix<T> &matrix1,
 			Matrix<T> &matrix2,
 			Matrix<T> &matrix3,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
-	template <typename T> int MatrixSelfMultiplicationHandler(
+	template <typename T> void MatrixSelfMultiplicationHandler(
 			Matrix<T> &matrix1,
 			Matrix<T> &matrix2,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
-	template <typename T> int DeterminantHandler(
+	template <typename T> void DeterminantHandler(
 			Matrix<T> &matrix,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
