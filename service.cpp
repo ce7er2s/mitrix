@@ -79,7 +79,7 @@ template <typename T> void Handlers::OutputHandler(
 		for (uint32_t j = 0; j < matrix.columns - 1; j++) {
 			ostream << matrix[i][j] << " ";
 		}
-		ostream << matrix[i][matrix.columns-1] << std::endl;
+		ostream << matrix._storage[i][matrix.columns-1] << std::endl;
 	}
 }
 
@@ -131,7 +131,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 		ostream << std::setw(rows_size) << i+1 << " |";  // Отрисовка элементов
 		ostream << std::setw(cell_size) << matrix[i][0];
 		for (uint32_t j = 1; j < matrix.columns; j++) {
-			ostream << " |" << std::setw(cell_size) << matrix[i][j];
+			ostream << " |" << std::setw(cell_size) << matrix._storage[i][j];
 		}
 		ostream << std::endl;
 	}
@@ -155,7 +155,7 @@ template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
 	if (matrix1.columns != matrix2.rows) {
 		throw (int) ERRORS::MULTIPLICATION_IMPOSSIBLE;
 	}
-	matrix1.multiplyWith(matrix2);
+	matrix1.MultiplyWith(matrix2);
 	ostream << "Successful!";
 }
 
@@ -165,7 +165,7 @@ template <typename T> void Handlers::DeterminantHandler(
 	if (matrix.rows != matrix.columns) {
 		throw (int) ERRORS::NO_DETERMINANT;
 	}
-	ostream << "Determinant is " << matrix.determinantOf() << ".";
+	ostream << "Determinant is " << matrix.DeterminantOf() << ".";
 }
 
 template <typename T> Matrix<T>* Handlers::GetMatrixHandler(std::vector<Matrix<T>> &matrixSet, uint32_t index) {

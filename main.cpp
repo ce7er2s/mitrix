@@ -84,8 +84,8 @@ int main() {
 
 	std::vector<Matrix<MATRIX_T>> matrixSet(10);
 	for (Matrix<MATRIX_T> &matrix: matrixSet) {
-		matrix.resizeTo(0, 0);
-		matrix.fillStorage('r', 0, -11, 1);
+		matrix.ResizeTo(0, 0);
+		matrix.FillStorage('r', 0, -11, 1);
 	}
 
 	std::map<std::wstring, int> commandMapping = {

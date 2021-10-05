@@ -6,6 +6,10 @@
 #include <string>
 #include <random>
 
+template <typename T> std::vector<T> Matrix<T>::operator[] (int32_t n) {
+	return this->_storage[n];	// TODO: Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
+}
+
 template <typename T> Matrix<T>::Matrix(Matrix<T> _matrix_1, Matrix _matrix_2) { // умножение на основе метода multiplyWith
 	this->rows = _matrix_1.rows;		// Плохо работает.
 	this->columns = _matrix_2.columns;
@@ -195,129 +199,3 @@ template <typename T> void Matrix<T>::DivisionByScalar(T _value) {
 		}
 	}
 }
-
-
-
-
-/* template <typename T> T Matrix<T>::operator~() {
-	return this->determinantOf();
-}
-
-template <typename T> std::vector<T> Matrix<T>::operator[] (int32_t n) {
-	return this->_storage[n];	// TODO: Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
-}
-template <typename T> Matrix<T> Matrix<T>::operator* (Matrix& _matrix) { // Надо проверить как я в принципе передаю параметры.
-	return Matrix<T>(*this, _matrix);	//  Плохо работает.
-}
-template <typename T> void Matrix<T>::operator*= (Matrix& _matrix) {
-	this->multiplyWith(_matrix);
-} */
-
-/* template <typename T> void Matrix<T>::inputFrom(std::istream& _istream, uint32_t _rows, uint32_t _columns) {
-	if (_rows == 0 && _columns == 0) {
-		_istream >> _rows;
-		_istream >> _columns;
-	}
-	if (_rows != 0 || _columns != 0) {
-		if (_rows == 0)        // _stream это ссылка на поток ввода (std::ifstream легко кастуется в std::istream)
-			_rows = this->rows;        // Если хотя бы один размер матрицы ненулевой, ее размеры меняются
-		if (_columns == 0)
-			_columns = this->columns;
-		this->resizeTo(_rows, _columns); // Изменение размеров матрицы.
-	} else {
-		_rows = this->rows; // Вариант без переразметки.
-		_columns = this->columns;
-	}
-	for (uint32_t i = 0; i < _rows; i++) // Чтение из переданного потока. Почему-то падает с 139 (SEGFAULT)
-		for (uint32_t j = 0; j < _columns; j++) // UPD: Балда, там был инициализирован пустой массив
-			_istream >> this->_storage[i][j];									// с ненулевым размером.
-}
-
-template <typename T> void Matrix<T>::printTo(std::ostream& _ostream) {
-	for (uint32_t i = 0; i < this->rows; i++) {
-		for (uint32_t j = 0; j < this->columns; j++) {
-			_ostream << this->_storage[i][j];
-			_ostream << " "; // TODO: сделать разделитель отдельным атрибутом
-		}
-		_ostream << std::endl;
-	}
-}
-
-template <typename T> void Matrix<T>::printFormatTo(std::ostream& _ostream, char precision) {  // АХТУНГ, НЕ ТРОГАТЬ БЛЯТЬ НИКОГДА, Я ВООБЩЕ НЕ ПОНИМАЮ КАК Я ЭТО СДЕЛАЛ
-	uint32_t max_length = 0; // Максимальная длина ячейки
-	std::string spaces; // Строка для отступа в ячейке
-	std::string dashes; // Строка для горизонтальных символов
-
-	std::stringstream stream;
-	stream << std::fixed << std::setprecision(precision);
-	for (uint32_t i = 0; i < this->rows; i++) {  // цикл поиска максимальной длины ячейки
-		for (uint32_t length, j = 0; j < this->columns; j++) {
-			stream << this->_storage[i][j];
-			std::string temp = stream.str();
-			stream.str("");
-			length = temp.length(); // Длина записи текущей ячейки
-			if (length > max_length)
-				max_length = length; // Сохранение максимальной ячейки
-		}
-	}
-
-	_ostream << "╔";
-	for (uint32_t j = 1; j < this->columns; j++) {
-		for (uint32_t d = 0; d < max_length + 2; d++)
-			_ostream << "═"; // Печать разделителя строк и крестиков
-		_ostream << "╦";
-	}
-	for (uint32_t d = 0; d < max_length + 2; d++) // последие разделители отдельно (2 потому что отступ в один пробел с двух сторон)
-		_ostream << "═";
-	_ostream << "╗" << std::endl; // Закрывающий разделитель и перевод строки
-
-
-	for (uint32_t i = 1; i < this->rows; i++) {
-		_ostream << "║ ";
-		for (uint32_t j = 0; j < this->columns; j++) {
-			stream << this->_storage[i-1][j];
-			std::string temp = stream.str();// Временая переменная элемента массива
-			stream.str("");
-			spaces = std::string(max_length - temp.length(), ' ');		// Смещение для печати текущей ячейки
-			_ostream << spaces;											// Печать смещения
-			_ostream << temp;												// Печать значения
-			if (j != (this->columns)-1)
-				_ostream << " ║ "; 											// Печать раздителителя
-		}
-		_ostream << " ║" << std::endl; // Перевод строки
-
-
-		_ostream << "╠";  // Разделитель для строк
-		for (uint32_t j = 1; j < this->columns; j++) {
-			for (uint32_t d = 0; d < max_length + 2; d++) // (2 потому что отступ в один пробел с двух сторон)
-				_ostream << "═"; // Печать разделителя строк и крестиков
-			_ostream << "╬";
-		}
-		for (uint32_t d = 0; d < max_length + 2; d++) // последие разделители отдельно (2 потому что отступ в один пробел с двух сторон)
-			_ostream << "═";
-		_ostream << "╣" << std::endl; // Закрывающий разделитель и перевод строки
-	}
-
-	_ostream << "║ ";  // Печать последней строки
-	for (uint32_t j = 0; j < this->columns; j++) {
-		stream << this->_storage[(this->rows)-1][j];
-		std::string temp = stream.str();									    // Временая переменная элемента массива
-		stream.str("");
-		spaces = std::string(max_length - temp.length(), ' ');				// Смещение для печати текущей ячейки
-		_ostream << spaces;													// Печать смещения
-		_ostream << temp;														// Печать значения
-		if (j != (this->columns)-1)
-			_ostream << " ║ "; 													// Печать раздителителя
-	}
-	_ostream << " ║" << std::endl; // печать последнего разделителя
-
-	_ostream << "╚"; // Начало отрисовки дна
-	for (uint32_t j = 1; j < this->columns; j++) {
-		for (uint32_t d = 0; d < max_length + 2; d++) // (2 потому что отступ в один пробел с двух сторон)
-			_ostream << "═"; // Печать разделителя строк и крестиков
-		_ostream << "╩";
-	}
-	for (uint32_t d = 0; d < max_length + 2; d++) // последие разделители отдельно (2 потому что отступ в один пробел с двух сторон)
-		_ostream << "═";
-	_ostream << "╝" << std::endl; // Закрывающий разделитель и перевод строки
-} */
