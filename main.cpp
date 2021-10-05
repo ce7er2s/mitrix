@@ -103,7 +103,7 @@ int main() { // TODO: Вынести сервисные функции в servic
 			{3, L"ZERO LENGTH"},
 			{4, L"DETERMINANT IS ZERO"},
 			{5, L"MULTIPLICATION IMPOSSIBLE"},
-			{6, L"UNKNOWN"}
+			{6, L"MATRIX DOES NOT EXIST"}
 	};
 
 	auto &ostream = std::wcout;
