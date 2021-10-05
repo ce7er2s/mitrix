@@ -38,7 +38,7 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 			case 2: {
 				int32_t precision;
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				Matrix<MATRIX_T> matrix = *Handlers::GetMatrixHandler(matrixSet, index);
+				Matrix<MATRIX_T> matrix = Handlers::GetMatrixHandler(matrixSet, index);
 				if (!args[2].empty()) // TODO: вынести в хендлер
 					precision = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
 				else
@@ -48,13 +48,13 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 			}
 			case 3: {
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				Matrix<MATRIX_T> matrix = *Handlers::GetMatrixHandler(matrixSet, index);
+				Matrix<MATRIX_T> matrix = Handlers::GetMatrixHandler(matrixSet, index);
 				Handlers::InputHandler(matrix, istream);
 				break;
 			}
 			case 4: {
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				Matrix<MATRIX_T> matrix = *Handlers::GetMatrixHandler(matrixSet, index);
+				Matrix<MATRIX_T> matrix = Handlers::GetMatrixHandler(matrixSet, index);
 				Handlers::OutputHandler(matrix, ostream);
 				break;
 			}
