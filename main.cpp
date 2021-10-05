@@ -17,7 +17,7 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 	std::wstring arg;
 	int i = 0;
 
-	ostream << L">>> ";  // приглашение для ввода
+	ostream << ">>> ";  // приглашение для ввода
 	std::getline(istream, str_to_parse); // получение всей строки из ostream.
 	parser.str(str_to_parse); // Копирование строки в поток-хранилище строк, ок
 	while (parser >> args[i]) { // Запись аргументов из потока
@@ -38,29 +38,25 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 			case 2: {
 				int32_t precision;
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				if (!args[2].empty())
+				Matrix<MATRIX_T> matrix = *Handlers::GetMatrixHandler(matrixSet, index);
+				if (!args[2].empty()) // TODO: вынести в хендлер
 					precision = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
 				else
 					precision = 4; // Значение точности по умолчанию
-				Handlers::FormatOutputHandler(matrixSet[index], ostream, precision);
+				Handlers::FormatOutputHandler(matrix, ostream, precision);
 				break;									// Форматированный вывод матрицы
 			}
-			case 3: {int32_t rows = 0;
-				int32_t columns = 0;
+			case 3: {
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				if (index < 0 || index > matrixSet.size()) {
-					throw std::invalid_argument("MATRIX INDEX DOESN'T EXIST.");
-				}
-				if (!args[2].empty())
-					rows = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
-				if (!args[3].empty())
-					columns = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
-				Handlers::InputHandler(matrixSet[index], rows, columns, istream);
-				ostream << std::endl;
+				Matrix<MATRIX_T> matrix = *Handlers::GetMatrixHandler(matrixSet, index);
+				Handlers::InputHandler(matrix, istream);
 				break;
 			}
 			case 4: {
-
+				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
+				Matrix<MATRIX_T> matrix = *Handlers::GetMatrixHandler(matrixSet, index);
+				Handlers::OutputHandler(matrix, ostream);
+				break;
 			}
 			case 5: {
 				return -1;
@@ -112,9 +108,8 @@ int main() { // TODO: Вынести сервисные функции в servic
 	auto &ostream = std::wcout;
 	auto &istream = std::wcin;
 
-	int run_code = 0;
-	while (run_code == 0) {
-		run_code = Parse(ostream, istream, commandMapping, Exceptions, matrixSet);
-	}
+	while (!Parse(ostream, istream, commandMapping, Exceptions, matrixSet))
+		;
+
 }
 // mitrix-cli */

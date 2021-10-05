@@ -19,8 +19,6 @@ namespace Handlers {
 
 	template <typename T> void InputHandler(
 			Matrix<T> &matrix,
-			uint32_t rows = 0,
-			uint32_t columns = 0,
 			std::basic_istream<wchar_t>& istream = std::wcin
 			);
 
@@ -52,6 +50,7 @@ namespace Handlers {
 			Matrix<T> &matrix,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
+	template <typename T> Matrix<T>* GetMatrixHandler(std::vector<Matrix<T>> matrixSet, uint32_t index);
 }
 
 #include "service.cpp"
