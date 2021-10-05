@@ -11,35 +11,34 @@ public:
 	std::vector<std::vector<T>> _storage;
 	std::wstring name;
 public:
-	T operator~ ();
+	explicit Matrix (Matrix<T> _matrix_1, Matrix<T> _matrix_2);
+	explicit Matrix(uint32_t _rows = 0, uint32_t _columns = 0, std::vector<std::vector<T>>* _storage = nullptr);
+	Matrix<T> SubmatrixOf (uint32_t _row, uint32_t _column);
+
+	void ResizeTo(uint32_t _rows, uint32_t _columns);
+	void FillStorage(char mode = 'r', T value = 0, T left_border = 0, T right_border = 0);
+
+	void MultiplyWith(Matrix& _matrix);
+	void MultiplicationByMatrix(Matrix<T>& _matrix);
+	void AdditionByMatrix(Matrix<T>& _matrix);
+	void SubtractionByMatrix(Matrix<T>& _matrix);
+	void DivisionByMatrix(Matrix<T>& _matrix);
+
+	void MultiplicationByScalar(T _value);
+	void AdditionByScalar(T _value);
+	void SubtractionByScalar(T _value);
+	void DivisionByScalar(T _value);
+
+	T DeterminantOf();
+
+	/*	void inputFrom(std::istream& _istream = std::cin, uint32_t _rows = 0, uint32_t _columns = 0);
+	void printTo(std::ostream& _ostream = std::cout);
+	void printFormatTo(std::ostream& _ostream = std::cout, char precision = 2); */
+
+	/*	T operator~ ();
 	std::vector<T> operator[] (int32_t n);
 	Matrix<T> operator* (Matrix<T>& _matrix);
-	void operator*= (Matrix<T>& _matrix);
-
-	Matrix (Matrix<T> _matrix_1, Matrix<T> _matrix_2);
-	explicit Matrix(uint32_t _rows = 0, uint32_t _columns = 0, std::vector<std::vector<T>>* _storage = nullptr);
-	Matrix<T> submatrixOf (uint32_t _row, uint32_t _column);
-
-	void inputFrom(std::istream& _istream = std::cin, uint32_t _rows = 0, uint32_t _columns = 0);
-	void printTo(std::ostream& _ostream = std::cout);
-	void printFormatTo(std::ostream& _ostream = std::cout, char precision = 2);
-
-	void resizeTo(uint32_t _rows, uint32_t _columns);
-	void fillStorage(char mode = 'r', T value = 0, T left_border = 0, T right_border = 0);
-
-	void multiplyWith(Matrix& _matrix);
-
-	void multiplicationByMatrix(Matrix<T>& _matrix);
-	void additionByMatrix(Matrix<T>& _matrix);
-	void subtractionByMatrix(Matrix<T>& _matrix);
-	void divisionByMatrix(Matrix<T>& _matrix);
-
-	void multiplicationByScalar(T _value);
-	void additionByScalar(T _value);
-	void subtractionByScalar(T _value);
-	void divisionByScalar(T _value);
-
-	T determinantOf();
+	void operator*= (Matrix<T>& _matrix); */
 };
 
 #include "mitrix.hpp"

@@ -31,28 +31,29 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 
 	try {
 		switch (command_code) {
-			case 1: {
+			case 1: { // Вывод списка.
 				Handlers::ListHandler(matrixSet, ostream);  // Вывод списка матриц.
 				break;
 			}
-			case 2: {
+			case 2: { // Красивый вывод
 				int32_t precision;
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
 				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
-				if (!args[2].empty()) // TODO: вынести в хендлер
+				if (!args[2].empty()) //
 					precision = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
 				else
 					precision = 4; // Значение точности по умолчанию
 				Handlers::FormatOutputHandler(*matrix, ostream, precision);
 				break;									// Форматированный вывод матрицы
 			}
-			case 3: {
+			case 3: { // Стандартный ввод
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
 				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
 				Handlers::InputHandler(*matrix, istream);
+				std::getline(istream, str_to_parse); // После ввода почему-то считывается пустая строка, это фикс
 				break;
 			}
-			case 4: {
+			case 4: { // Стандартный вывод
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
 				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
 				Handlers::OutputHandler(*matrix, ostream);
@@ -67,19 +68,18 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 			default:
 				ostream << L"WRONG COMMAND \"" << command << "\"." << std::endl;
 		}
-	} catch (const std::invalid_argument &invalidArgument) {
+	} catch (const std::invalid_argument &invalidArgument) { // Обработка исключения std::stoi
 		ostream << "WRONG ARGUMENT in command: \"" << str_to_parse << "\"." << std::endl;
-	} catch (const std::exception &unknownException) {
+	} catch (const std::exception &unknownException) { // Обычно ловит ошибки std::bad_allocation
 		ostream << "UNKNOWN EXCEPTION: " << unknownException.what() << "." << std::endl;
 	} catch (int &errorCode) {
-		ostream << Exceptions[errorCode] << std::endl;
+		ostream << Exceptions[errorCode] << std::endl;  // Ошибки хендлеров
 	}
 	return 0;
 }
-// TODO: вынести обработчики индексов в хендлеры или в отдельный хендлер.
 // TODO: сделать нормальную обработку ошибок через std::exception
 
-int main() { // TODO: Вынести сервисные функции в service.cpp
+int main() {
 	setlocale(LC_CTYPE, "");
 
 	std::vector<Matrix<MATRIX_T>> matrixSet(10);
