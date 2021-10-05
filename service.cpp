@@ -168,9 +168,9 @@ template <typename T> void Handlers::DeterminantHandler(
 	ostream << "Determinant is " << matrix.determinantOf() << ".";
 }
 
-template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T>> &matrixSet, uint32_t index) {
+template <typename T> Matrix<T>* Handlers::GetMatrixHandler(std::vector<Matrix<T>> &matrixSet, uint32_t index) {
 	if ((0 <= index) && (index <= matrixSet.size())) {
-		throw (int) ERRORS::MATRIX_DOES_NOT_EXIST;
+		return &matrixSet[index];
 	}
-	return matrixSet[index];
+	throw (int) ERRORS::MATRIX_DOES_NOT_EXIST;
 }

@@ -50,7 +50,7 @@ namespace Handlers {
 			Matrix<T> &matrix,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
-	template <typename T> Matrix<T>& GetMatrixHandler(std::vector<Matrix<T>>& matrixSet, uint32_t index);
+	template <typename T> Matrix<T>* GetMatrixHandler(std::vector<Matrix<T>>& matrixSet, uint32_t index);
 }
 
 #include "service.cpp"
