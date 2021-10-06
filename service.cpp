@@ -55,12 +55,12 @@ template <typename T> void Handlers::InputHandler(
 	int64_t columns = 0;
 	istream >> rows;
 	istream >> columns;
-	matrix.resizeTo(rows, columns);
 	if ((rows == 0) || (columns == 0))
 		throw (int) ERRORS::ZERO_LENGTH;
 	if ((rows < 0) || (columns < 0)) {
 		throw (int) ERRORS::NEGATIVE_ARG;
 	}
+	matrix.ResizeTo(rows, columns);
 	for (uint32_t i = 0; i < rows; i++) {
 		for (uint32_t j = 0; j < columns; j++) {
 			istream >> matrix._storage[i][j];
@@ -71,9 +71,6 @@ template <typename T> void Handlers::InputHandler(
 template <typename T> void Handlers::OutputHandler(
 		Matrix<T> &matrix,
 		std::basic_ostream<wchar_t>& ostream) {
-	if (matrix.rows == 0 || matrix.columns == 0) {
-		throw (int) ERRORS::ZERO_LENGTH;
-	}
 	ostream << matrix.rows << " " << matrix.columns << std::endl;
 	for (uint32_t i = 0; i < matrix.rows; i++) {
 		for (uint32_t j = 0; j < matrix.columns - 1; j++) {

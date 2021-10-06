@@ -1,32 +1,37 @@
 #include <iostream>
+#include <filesystem>
 #include <map>
 #include "mitrix.h"
 #include "service.h"
 
+std::vector<std::wstring> ParseArguments(const std::wstring& to_parse) {
+
+	std::vector<std::wstring> args(5, L"");
+	size_t i = 0;
+
+	std::wstringstream parser;  // поток-хранилище входной строки
+	parser.str(to_parse); // Копирование строки в поток-хранилище строк, ок
+	while (parser >> args[i])
+		i++;
+
+	for (auto& letter: args[0])
+		letter = std::tolower(letter);
+
+	return args;
+}
 
 typedef double MATRIX_T;
 
-int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
+int Execute(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
 		   std::map<std::wstring, int> &commandMapping, std::map<int, std::wstring> &Exceptions,
-		   std::vector<Matrix<MATRIX_T>> &matrixSet) {
+		   std::vector<Matrix<MATRIX_T>> &matrixSet, const std::wstring& Prompt) {
 
-	std::wstringstream parser;  // поток-хранилище входной строки
-	std::vector<std::wstring> args(10);	// вектор для аргументов
-	std::wstring str_to_parse;				// буфер входной строки
-	std::wstring command;					// отдельная строка для первого аргумента
-	std::wstring arg;
-	int i = 0;
+	std::wstring to_parse;
+	std::getline(istream, to_parse);
 
-	ostream << ">>> ";  // приглашение для ввода
-	std::getline(istream, str_to_parse); // получение всей строки из ostream.
-	parser.str(str_to_parse); // Копирование строки в поток-хранилище строк, ок
-	while (parser >> args[i]) { // Запись аргументов из потока
-		i++;
-	}
+	auto args = ParseArguments(to_parse);
+	auto command = args[0];
 
-	command = args[0];
-	for (auto &ch: command)  // Костыль регистронезависимости
-		ch = std::tolower(ch);
 	int command_code = commandMapping[command];
 
 	try {
@@ -49,27 +54,52 @@ int Parse(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &ist
 			case 3: { // Стандартный ввод
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
 				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
-				Handlers::InputHandler(*matrix, istream);
-				std::getline(istream, str_to_parse); // После ввода почему-то считывается пустая строка, это фикс
+				if (!args[2].empty()) {
+					std::filesystem::path path(args[2]);
+					std::basic_ifstream<wchar_t> file(path);  // а если эта срань сломается? Что делать? Файл-то незакрыт.
+					Handlers::InputHandler(*matrix, file);
+					file.close();
+				} else {
+					Handlers::InputHandler(*matrix, istream);
+					std::getline(istream, to_parse); // После ввода почему-то считывается пустая строка, это фикс
+				}
 				break;
 			}
 			case 4: { // Стандартный вывод
 				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
 				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
-				Handlers::OutputHandler(*matrix, ostream);
+				if (!args[2].empty()) {
+					std::filesystem::path path(args[2]);
+					std::basic_ofstream<wchar_t> file(path);  //
+					Handlers::OutputHandler(*matrix, file);
+					file.close();
+				} else {
+					Handlers::OutputHandler(*matrix, ostream);
+				}
 				break;
 			}
 			case 5: {
-				return -1;
+				std::filesystem::path path(args[1]);
+				std::basic_ifstream<wchar_t> script(path);
+				if (!script.is_open()) {
+					throw 2; // см Exceptions;
+				}
+				while (!script.eof()) {
+					Execute(ostream, script, commandMapping, Exceptions, matrixSet, L"");
+				}
+				break;
 			}
 			case 6: {
+				return -1;
+			}
+			case 7: {
 				break;
 			}
 			default:
 				ostream << L"WRONG COMMAND \"" << command << "\"." << std::endl;
 		}
 	} catch (const std::invalid_argument &invalidArgument) { // Обработка исключения std::stoi
-		ostream << "WRONG ARGUMENT in command: \"" << str_to_parse << "\"." << std::endl;
+		ostream << "WRONG ARGUMENT in command: \"" << to_parse << "\"." << std::endl;
 	} catch (const std::exception &unknownException) { // Обычно ловит ошибки std::bad_allocation
 		ostream << "UNKNOWN EXCEPTION: " << unknownException.what() << "." << std::endl;
 	} catch (int &errorCode) {
@@ -88,13 +118,17 @@ int main() {
 		matrix.FillStorage('r', 0, -11, 1);
 	}
 
+	auto &ostream = std::wcout;
+	auto &istream = std::wcin;
+
 	std::map<std::wstring, int> commandMapping = {
 			{L"list",1},
 			{L"print", 2},
 			{L"input", 3},
 			{L"output", 4},
-			{L"exit", 5},
-			{L"", 6}
+			{L"execute", 5},
+			{L"exit", 6},
+			{L"", 7}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
@@ -106,10 +140,7 @@ int main() {
 			{6, L"MATRIX DOES NOT EXIST"}
 	};
 
-	auto &ostream = std::wcout;
-	auto &istream = std::wcin;
-
-	while (!Parse(ostream, istream, commandMapping, Exceptions, matrixSet))
+	while (!Execute(ostream, istream, commandMapping, Exceptions, matrixSet, L">>> "))
 		;
 
 }
