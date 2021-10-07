@@ -35,15 +35,13 @@ template <typename T> void Handlers::ListHandler(
 		ostream << std::setw(5) << matrix.rows << "|";
 		ostream << std::setw(8) << matrix.columns << "|";
 		ostream << std::setw(8) << sizeof(T) * matrix.rows * matrix.columns << std::setw(6) << L"bytes" << "|";
-		ostream << std::left;
+		ostream << " ";
 		if (!matrix.name.empty()) {
-			ostream << std::setw(matrix.name.length() + 1);
 			ostream << matrix.name << std::endl;
 		}
 		else {
 			ostream << L"NONE" << std::endl;
 		}
-		ostream << std::right;
 	}
 }
 
@@ -56,9 +54,9 @@ template <typename T> void Handlers::InputHandler(
 	istream >> rows;	// Ввод из потока
 	istream >> columns;
 	if ((rows == 0) || (columns == 0))		// Обработка ошибок
-		throw (int) ERRORS::ZERO_LENGTH;
+		throw ERRORS::ZERO_LENGTH;
 	if ((rows < 0) || (columns < 0)) {
-		throw (int) ERRORS::NEGATIVE_ARG;
+		throw ERRORS::NEGATIVE_ARG;
 	}
 	matrix.ResizeTo(rows, columns); // Переразметка матрицы
 	for (uint32_t i = 0; i < rows; i++) {
@@ -84,7 +82,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки
 	if (matrix.rows == 0 || matrix.columns == 0) { // проверка на нулевую длину
-		throw (int) ERRORS::ZERO_LENGTH;
+		throw ERRORS::ZERO_LENGTH;
 	}
 
 	u_char precision = 4;  // Стандартное значение
@@ -94,7 +92,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 		} catch (std::invalid_argument InvalidArgument) {
 			throw ERRORS::INVALID_ARGUMENT;
 		} catch (...) {
-			throw ERRORS::UNKNOWN_ERROR; // Заглушка для других проблем
+			throw; // Заглушка для других проблем
 		}
 	}
 
@@ -150,7 +148,7 @@ template <typename T> void Handlers::MatrixMultiplicationHandler(
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]); // Получение ссылки
 	auto& matrix3 = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]); // Получение ссылки
 	if (matrix2.columns != matrix3.rows) {
-		throw (int) ERRORS::MULTIPLICATION_IMPOSSIBLE; // Проверки
+		throw ERRORS::MULTIPLICATION_IMPOSSIBLE; // Проверки
 	}
 	matrix1 = Matrix<T>(matrix2, matrix3);
 }
@@ -160,7 +158,7 @@ template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
 	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]); // Получение ссылки на матрицу
 	if (matrix1.columns != matrix2.rows) {
-		throw (int) ERRORS::MULTIPLICATION_IMPOSSIBLE; //  Проверки
+		throw ERRORS::MULTIPLICATION_IMPOSSIBLE; //  Проверки
 	}
 	matrix1.MultiplyWith(matrix2); // умножение
 	ostream << "Successful!";
@@ -170,28 +168,40 @@ template <typename T> void Handlers::DeterminantHandler(
 		std::vector<Matrix<T>>& MatrixSet,  std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
 	if (matrix.rows != matrix.columns) {	// TODO: проверь в отладчике, что копирует, а что передает ссылку auto или auto&
-		throw (int) ERRORS::NO_DETERMINANT;	// Простая проверка
+		throw ERRORS::NO_DETERMINANT;	// Простая проверка
 	}
 	ostream << "Determinant is " << matrix.DeterminantOf() << ".";
 }
 
 template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index) {
 	try {
-		size_t num = std::stoi(index); // Попытка найти матрицу по номеру идет первой. Если отвалится, то в обработчике
-		if ((0 <= num) && (num <= MatrixSet.size())) {										// stoi идет поиск по имени
-			return MatrixSet[index]; // проверка на диапазон
+		size_t num = std::stoi(index) - 1; // Попытка найти матрицу по номеру идет первой. Если отвалится, то в обработчике
+		if ((0 <= num) && (num < MatrixSet.size())) {										// stoi идет поиск по имени
+			return MatrixSet[num]; // проверка на диапазон
+		} else {
+			throw ERRORS::MATRIX_DOES_NOT_EXIST;
 		}
 	} catch (const std::invalid_argument& InvalidArgument) {
-		for (Matrix<T>& matrix: MatrixSet) { // Поиск по имени в массиве матриц
-			if (matrix.name == index) {
-				return matrix;		// Возвращается ссылка
+		if (!index.empty()) {
+			for (Matrix<T> &matrix: MatrixSet) { // Поиск по имени в массиве матриц
+				if (matrix.name == index) {
+					return matrix;        // Возвращается ссылка
+				}
 			}
+			throw ERRORS::MATRIX_DOES_NOT_EXIST;
+		} else {
+			throw ERRORS::INVALID_ARGUMENT;	// Ошибка ненайденной матрицы
 		}
-		throw ERRORS::MATRIX_DOES_NOT_EXIST;	// Ошибка ненайденной матрицы
 	}
 	catch (...) {
-		throw ERRORS::UNKNOWN_ERROR;  // Неизвестная ошибка
+		throw;  // Неизвестная ошибка
 	}
+}
+
+template <typename T> void Handlers::SetNameHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	matrix.name = Arguments[2];
 }
 
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {

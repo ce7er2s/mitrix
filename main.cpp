@@ -75,9 +75,13 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				break;
 			}
 			case 6: {
-				return -1;
+				Handlers::SetNameHandler(MatrixSet, Arguments, ostream);
+				break;
 			}
 			case 7: {
+				return -1;
+			}
+			case 8: {
 				break;
 			}
 			default:
@@ -87,7 +91,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 		ostream << "WRONG ARGUMENT in command: \"" << to_parse << "\"." << std::endl;
 	} catch (const std::exception &unknownException) { // Обычно ловит ошибки std::bad_allocation
 		ostream << "UNKNOWN EXCEPTION: " << unknownException.what() << "." << std::endl;
-	} catch (int &errorCode) {
+	} catch (ERRORS& errorCode) {
 		ostream << Exceptions[errorCode] << std::endl;  // Ошибки хендлеров
 	}
 	return 0;
@@ -100,11 +104,10 @@ int main() {
 	std::vector<Matrix<MATRIX_T>> matrixSet(10);
 	for (Matrix<MATRIX_T> &matrix: matrixSet) {
 		matrix.ResizeTo(0, 0);
-		matrix.FillStorage('r', 0, -11, 1);
 	}
 
-	auto &ostream = std::wcout;
-	auto &istream = std::wcin;
+	auto& ostream = std::wcout;
+	auto& istream = std::wcin;
 
 	std::map<std::wstring, int> CommandMapping = {
 			{L"list",1},
@@ -112,8 +115,9 @@ int main() {
 			{L"input", 3},
 			{L"output", 4},
 			{L"execute", 5},
-			{L"exit", 6},
-			{L"", 7}
+			{L"name", 6},
+			{L"exit", 7},
+			{L"", 8}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
@@ -122,7 +126,9 @@ int main() {
 			{3, L"ZERO LENGTH"},
 			{4, L"DETERMINANT IS ZERO"},
 			{5, L"MULTIPLICATION IMPOSSIBLE"},
-			{6, L"MATRIX DOES NOT EXIST"}
+			{6, L"MATRIX DOES NOT EXIST"},
+			{7, L"UNKNOWN ERROR"},
+			{8, L"INVALID ARGUMENT"}
 	};
 
 	int run_code = 0;
