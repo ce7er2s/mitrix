@@ -22,72 +22,55 @@ std::vector<std::wstring> ParseArguments(const std::wstring& to_parse) {
 
 typedef double MATRIX_T;
 
-int Execute(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
-		   std::map<std::wstring, int> &commandMapping, std::map<int, std::wstring> &Exceptions,
-		   std::vector<Matrix<MATRIX_T>> &matrixSet, const std::wstring& Prompt) {
+int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
+		   std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
+		   std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
 
 	ostream << Prompt;
-
+	
 	std::wstring to_parse;
 	std::getline(istream, to_parse);
-
-	auto args = ParseArguments(to_parse);
-	auto command = args[0];
-
-	int command_code = commandMapping[command];
-
+	
+	auto Arguments = ParseArguments(to_parse);
+	auto Command = Arguments[0];
+	
+	int command_code = CommandMapping[Command];
+	
 	try {
 		switch (command_code) {
 			case 1: { // Вывод списка.
-				Handlers::ListHandler(matrixSet, ostream);  // Вывод списка матриц.
+				Handlers::ListHandler(MatrixSet,Arguments, ostream);  // Вывод списка матриц.
 				break;
 			}
 			case 2: { // Красивый вывод
-				int32_t precision;
-				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
-				if (!args[2].empty()) //
-					precision = std::stoi(args[2]);	// Ошибка перевода stoi отлавливается ниже
-				else
-					precision = 4; // Значение точности по умолчанию
-				Handlers::FormatOutputHandler(*matrix, ostream, precision);
+				Handlers::FormatOutputHandler(MatrixSet, Arguments, ostream);
 				break;									// Форматированный вывод матрицы
 			}
 			case 3: { // Стандартный ввод
-				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
-				if (!args[2].empty()) {
-					std::filesystem::path path(args[2]);
-					std::basic_ifstream<wchar_t> file(path);  // а если эта срань сломается? Что делать? Файл-то незакрыт.
-					Handlers::InputHandler(*matrix, file);
+				if (!Arguments[2].empty()) {
+					auto file = Handlers::OpenIFileHandler(Arguments[2]);
+					Handlers::InputHandler(MatrixSet, Arguments, file);
 					file.close();
 				} else {
-					Handlers::InputHandler(*matrix, istream);
+					Handlers::InputHandler(MatrixSet, Arguments, istream);
 					std::getline(istream, to_parse); // После ввода почему-то считывается пустая строка, это фикс
 				}
 				break;
 			}
 			case 4: { // Стандартный вывод
-				int32_t index = std::stoi(args[1]) - 1;  // Ошибка перевода stoi отлавливается ниже
-				Matrix<MATRIX_T>* matrix = Handlers::GetMatrixHandler(matrixSet, index);
-				if (!args[2].empty()) {
-					std::filesystem::path path(args[2]);
-					std::basic_ofstream<wchar_t> file(path);  //
-					Handlers::OutputHandler(*matrix, file);
+				if (!Arguments[2].empty()) {
+					auto file = Handlers::OpenOFileHandler(Arguments[2]);
+					Handlers::OutputHandler(MatrixSet, Arguments, file);
 					file.close();
 				} else {
-					Handlers::OutputHandler(*matrix, ostream);
+					Handlers::OutputHandler(MatrixSet, Arguments, ostream);
 				}
 				break;
 			}
 			case 5: {
-				std::filesystem::path path(args[1]);
-				std::basic_ifstream<wchar_t> script(path);
-				if (!script.is_open()) {
-					throw 2; // см Exceptions;
-				}
+				auto script = Handlers::OpenIFileHandler(Arguments[2]);
 				while (!script.eof()) {
-					Execute(ostream, script, commandMapping, Exceptions, matrixSet, L"");
+					Dispatcher(ostream, script, CommandMapping, Exceptions, MatrixSet, L"");
 				}
 				break;
 			}
@@ -98,7 +81,7 @@ int Execute(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &i
 				break;
 			}
 			default:
-				ostream << L"WRONG COMMAND \"" << command << "\"." << std::endl;
+				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
 		}
 	} catch (const std::invalid_argument &invalidArgument) { // Обработка исключения std::stoi
 		ostream << "WRONG ARGUMENT in command: \"" << to_parse << "\"." << std::endl;
@@ -123,7 +106,7 @@ int main() {
 	auto &ostream = std::wcout;
 	auto &istream = std::wcin;
 
-	std::map<std::wstring, int> commandMapping = {
+	std::map<std::wstring, int> CommandMapping = {
 			{L"list",1},
 			{L"print", 2},
 			{L"input", 3},
@@ -142,8 +125,8 @@ int main() {
 			{6, L"MATRIX DOES NOT EXIST"}
 	};
 
-	while (!Execute(ostream, istream, commandMapping, Exceptions, matrixSet, L">>> "))
-		;
-
+	int run_code = 0;
+	while (!run_code)
+		run_code = Dispatcher(ostream, istream, CommandMapping, Exceptions, matrixSet, L">>> ");
 }
 // mitrix-cli */
