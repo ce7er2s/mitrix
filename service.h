@@ -21,13 +21,13 @@ namespace Handlers {
 	template <typename T> void InputHandler(
 			std::vector<Matrix<T>>& MatrixSet,
 			std::vector<std::wstring>& Arguments,
-			std::basic_istream<wchar_t>& istream
+			std::basic_istream<wchar_t> istream
 			);
 
 	template <typename T> void OutputHandler(
 			std::vector<Matrix<T>>& MatrixSet,
 			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream
+			std::basic_ostream<wchar_t> ostream
 			);
 
 	template <typename T> void FormatOutputHandler(
@@ -55,6 +55,10 @@ namespace Handlers {
 			);
 
 	template <typename T> Matrix<T>& GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index);
+
+	std::basic_ifstream<wchar_t> OpenIFileHandler(std::wstring& path);
+
+	std::basic_ofstream<wchar_t> OpenOFileHandler(std::wstring& path);
 }
 
 #include "service.cpp"

@@ -48,8 +48,13 @@ template <typename T> void Handlers::ListHandler(
 }
 
 template <typename T> void Handlers::InputHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_istream<wchar_t>& istream) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_istream<wchar_t> istream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& output = istream;
+	if (!Arguments[2].empty()) {
+		output = Handlers::OpenIFileHandler(Arguments[2]);
+	}
+
 	int64_t rows = 0; // Длина и ширина вводятся первыми
 	int64_t columns = 0;
 	istream >> rows;	// Ввод из потока
@@ -68,7 +73,7 @@ template <typename T> void Handlers::InputHandler(
 }
 
 template <typename T> void Handlers::OutputHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t> ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	ostream << matrix.rows << " " << matrix.columns << std::endl;
 	for (uint32_t i = 0; i < matrix.rows; i++) {
@@ -191,4 +196,22 @@ template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T
 	catch (...) {
 		throw ERRORS::UNKNOWN_ERROR;  // Неизвестная ошибка
 	}
+}
+
+std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {
+	std::filesystem::path filepath(path);
+	std::basic_ifstream<wchar_t> file(filepath);
+	if (!file.is_open()) {
+		throw ERRORS::FILE_NOT_FOUND;
+	}
+	return file;
+}
+
+std::basic_ofstream<wchar_t> Handlers::OpenOFileHandler(std::wstring& path) {
+	std::filesystem::path filepath(path);
+	std::basic_ofstream<wchar_t> file(filepath);
+	if (!file.is_open()) {
+		throw ERRORS::FILE_NOT_FOUND;
+	}
+	return file;
 }
