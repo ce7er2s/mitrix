@@ -13,44 +13,48 @@
 
 namespace Handlers {
 	template <typename T> void ListHandler(
-			const std::vector<Matrix<T>> &matrix_set,
-			std::basic_ostream<wchar_t> &ostream = std::wcout  // при манипуляциях с потоком нельзя использовать const
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_ostream<wchar_t>& ostream  // при манипуляциях с потоком нельзя использовать const
 			);
 
 	template <typename T> void InputHandler(
-			Matrix<T> &matrix,
-			std::basic_istream<wchar_t>& istream = std::wcin
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_istream<wchar_t>& istream
 			);
 
 	template <typename T> void OutputHandler(
-			Matrix<T> &matrix,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_ostream<wchar_t>& ostream
 			);
 
 	template <typename T> void FormatOutputHandler(
-			Matrix<T> &matrix,
-			std::basic_ostream<wchar_t>& ostream = std::wcout,
-			u_char precision = 4
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_ostream<wchar_t>& ostream
 			);
 
 	template <typename T> void MatrixMultiplicationHandler(
-			Matrix<T> &matrix1,
-			Matrix<T> &matrix2,
-			Matrix<T> &matrix3,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_ostream<wchar_t>& ostream
 			);
 
 	template <typename T> void MatrixSelfMultiplicationHandler(
-			Matrix<T> &matrix1,
-			Matrix<T> &matrix2,
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
 	template <typename T> void DeterminantHandler(
-			Matrix<T> &matrix,
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
-	template <typename T> Matrix<T>* GetMatrixHandler(std::vector<Matrix<T>>& matrixSet, uint32_t index);
+
+	template <typename T> Matrix<T>& GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index);
 }
 
 #include "service.cpp"

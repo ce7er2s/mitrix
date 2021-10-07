@@ -26,6 +26,8 @@ int Execute(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &i
 		   std::map<std::wstring, int> &commandMapping, std::map<int, std::wstring> &Exceptions,
 		   std::vector<Matrix<MATRIX_T>> &matrixSet, const std::wstring& Prompt) {
 
+	ostream << Prompt;
+
 	std::wstring to_parse;
 	std::getline(istream, to_parse);
 

@@ -6,7 +6,7 @@
 #include <string>
 #include <random>
 
-template <typename T> std::vector<T> Matrix<T>::operator[] (int32_t n) {
+template <typename T> std::vector<T>& Matrix<T>::operator[] (int32_t n) {
 	return this->_storage[n];	// TODO: Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
 }
 
