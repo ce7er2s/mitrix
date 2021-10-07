@@ -1,10 +1,7 @@
 //
 // Created by reenie on 22.09.2021.
 //
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <random>
+
 
 template <typename T> std::vector<T>& Matrix<T>::operator[] (int32_t n) {
 	return this->_storage[n];	// TODO: Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
@@ -100,7 +97,7 @@ template <typename T> T Matrix<T>::DeterminantOf() {
 	}
 }
 
-template <typename T> void Matrix<T>::FillStorage(char mode, T value, T left_border, T right_border) {
+template <typename T> void Matrix<T>::FillStorage(u_char mode, T value, T left_border, T right_border) {
 	switch (mode) {
 		case 'r': {
 			std::mt19937 source(value);
@@ -129,9 +126,6 @@ template <typename T> void Matrix<T>::FillStorage(char mode, T value, T left_bor
 				}
 			}
 			break;
-		}
-		default: {
-			std::cerr << "fill mode " << mode << " is not specified" << std::endl;
 		}
 	}
 }

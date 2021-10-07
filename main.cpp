@@ -1,6 +1,11 @@
 #include <iostream>
 #include <filesystem>
+#include <vector>
 #include <map>
+#include <fstream>
+#include <iomanip>
+#include <string>
+#include <random>
 #include "mitrix.h"
 #include "service.h"
 
@@ -39,20 +44,20 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 	try {
 		switch (command_code) {
 			case 1: { // Вывод списка.
-				Handlers::ListHandler(MatrixSet,Arguments, ostream);  // Вывод списка матриц.
+				Handlers::ListHandler<MATRIX_T>(MatrixSet,Arguments, ostream);  // Вывод списка матриц.
 				break;
 			}
 			case 2: { // Красивый вывод
-				Handlers::FormatOutputHandler(MatrixSet, Arguments, ostream);
+				Handlers::FormatOutputHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				break;									// Форматированный вывод матрицы
 			}
 			case 3: { // Стандартный ввод
 				if (!Arguments[2].empty()) {
 					auto file = Handlers::OpenIFileHandler(Arguments[2]);
-					Handlers::InputHandler(MatrixSet, Arguments, file);
+					Handlers::InputHandler<MATRIX_T>(MatrixSet, Arguments, file);
 					file.close();
 				} else {
-					Handlers::InputHandler(MatrixSet, Arguments, istream);
+					Handlers::InputHandler<MATRIX_T>(MatrixSet, Arguments, istream);
 					std::getline(istream, to_parse); // После ввода почему-то считывается пустая строка, это фикс
 				}
 				break;
@@ -60,28 +65,39 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			case 4: { // Стандартный вывод
 				if (!Arguments[2].empty()) {
 					auto file = Handlers::OpenOFileHandler(Arguments[2]);
-					Handlers::OutputHandler(MatrixSet, Arguments, file);
+					Handlers::OutputHandler<MATRIX_T>(MatrixSet, Arguments, file);
 					file.close();
 				} else {
-					Handlers::OutputHandler(MatrixSet, Arguments, ostream);
+					Handlers::OutputHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				}
 				break;
 			}
 			case 5: {
-				auto script = Handlers::OpenIFileHandler(Arguments[2]);
+				auto script = Handlers::OpenIFileHandler(Arguments[1]);
 				while (!script.eof()) {
 					Dispatcher(ostream, script, CommandMapping, Exceptions, MatrixSet, L"");
 				}
 				break;
 			}
 			case 6: {
-				Handlers::SetNameHandler(MatrixSet, Arguments, ostream);
+				Handlers::SetNameHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				break;
 			}
 			case 7: {
-				return -1;
+				Handlers::FillMatrixHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
+				break;
 			}
 			case 8: {
+				Handlers::ResizeMatrixHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
+				break;
+			}
+			case 9: {
+				ostream << "NOT IMPLEMENTED" << std::endl;
+			}
+			case 10: {
+				return -1;
+			}
+			case 11: {
 				break;
 			}
 			default:
@@ -104,6 +120,7 @@ int main() {
 	std::vector<Matrix<MATRIX_T>> matrixSet(10);
 	for (Matrix<MATRIX_T> &matrix: matrixSet) {
 		matrix.ResizeTo(0, 0);
+		//matrix.FillStorage('r', 0, -10, 10);
 	}
 
 	auto& ostream = std::wcout;
@@ -116,8 +133,11 @@ int main() {
 			{L"output", 4},
 			{L"execute", 5},
 			{L"name", 6},
-			{L"exit", 7},
-			{L"", 8}
+			{L"fill", 7},
+			{L"resize", 8},
+			{L"multiply", 9},
+			{L"exit", 10},
+			{L"", 11}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
@@ -130,6 +150,9 @@ int main() {
 			{7, L"UNKNOWN ERROR"},
 			{8, L"INVALID ARGUMENT"}
 	};
+
+	time_t timestamp = std::time(nullptr);
+	ostream << "Mitrix v1.0 at " << std::ctime(&timestamp);
 
 	int run_code = 0;
 	while (!run_code)

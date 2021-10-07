@@ -204,6 +204,53 @@ template <typename T> void Handlers::SetNameHandler(
 	matrix.name = Arguments[2];
 }
 
+template <typename T> void Handlers::FillMatrixHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	u_char mode = 0;
+	if (!Arguments[2].empty()) {
+		mode = Arguments[2][0];
+	} else {
+		throw ERRORS::INVALID_ARGUMENT;
+	}
+	switch (mode) {
+		case 'i': {
+			matrix.FillStorage(mode);
+			break;
+		} case 'r': {
+			T left = std::stod(Arguments[3]);
+			T right = std::stod(Arguments[4]);
+			T value = 0.0;
+			if (!Arguments[4].empty()) {
+				value = std::stod(Arguments[5]);
+			}
+			matrix.FillStorage(mode, value, left, right);
+			break;
+		} case 'c': {
+			T value = 0.0;
+			if (!Arguments[4].empty()) {
+				value = std::stod(Arguments[3]);
+				matrix.FillStorage(mode, value);
+			}
+			break;
+		}
+		default: {
+			throw ERRORS::INVALID_ARGUMENT;
+		}
+	}
+}
+
+template <typename T> void Handlers::ResizeMatrixHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	uint32_t rows = std::stoul(Arguments[2]);
+	uint32_t columns = std::stoul(Arguments[3]);
+	if (rows == 0 || columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix.ResizeTo(rows, columns);
+}
+
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {
 	std::filesystem::path filepath(path);
 	std::basic_ifstream<wchar_t> file(filepath);
