@@ -11,7 +11,8 @@ enum ERRORS {
 	MULTIPLICATION_IMPOSSIBLE = 5,
 	MATRIX_DOES_NOT_EXIST = 6,
 	UNKNOWN_ERROR = 7,
-	INVALID_ARGUMENT = 8
+	INVALID_ARGUMENT = 8,
+	NAME_ALREADY_EXISTS = 9
 };
 
 template <typename T> void Handlers::ListHandler(
@@ -200,6 +201,11 @@ template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T
 
 template <typename T> void Handlers::SetNameHandler(
 		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+	for (auto& matrix: MatrixSet) {
+		if (matrix.name != L"" && matrix.name == Arguments[2]) {
+			throw ERRORS::NAME_ALREADY_EXISTS;
+		}
+	}
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	matrix.name = Arguments[2];
 }
@@ -217,18 +223,20 @@ template <typename T> void Handlers::FillMatrixHandler(
 		case 'i': {
 			matrix.FillStorage(mode);
 			break;
-		} case 'r': {
+		}
+		case 'r': {
 			T left = std::stod(Arguments[3]);
 			T right = std::stod(Arguments[4]);
 			T value = 0.0;
-			if (!Arguments[4].empty()) {
+			if (!Arguments[5].empty()) {
 				value = std::stod(Arguments[5]);
 			}
 			matrix.FillStorage(mode, value, left, right);
 			break;
-		} case 'c': {
+		}
+		case 'c': {
 			T value = 0.0;
-			if (!Arguments[4].empty()) {
+			if (!Arguments[3].empty()) {
 				value = std::stod(Arguments[3]);
 				matrix.FillStorage(mode, value);
 			}

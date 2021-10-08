@@ -11,12 +11,12 @@
 
 std::vector<std::wstring> ParseArguments(const std::wstring& to_parse) {
 
-	std::vector<std::wstring> args(5, L"");
+	std::vector<std::wstring> args(10, L"");
 	size_t i = 0;
 
 	std::wstringstream parser;  // поток-хранилище входной строки
 	parser.str(to_parse); // Копирование строки в поток-хранилище строк, ок
-	while (parser >> args[i])
+	while (parser >> args[i] && i < 10)
 		i++;
 
 	for (auto& letter: args[0])
@@ -25,7 +25,7 @@ std::vector<std::wstring> ParseArguments(const std::wstring& to_parse) {
 	return args;
 }
 
-typedef double MATRIX_T;
+using MATRIX_T = double;
 
 int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
 		   std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
@@ -148,7 +148,8 @@ int main() {
 			{5, L"MULTIPLICATION IMPOSSIBLE"},
 			{6, L"MATRIX DOES NOT EXIST"},
 			{7, L"UNKNOWN ERROR"},
-			{8, L"INVALID ARGUMENT"}
+			{8, L"INVALID ARGUMENT"},
+			{9, L"NAME ALREADY EXISTS"}
 	};
 
 	time_t timestamp = std::time(nullptr);
