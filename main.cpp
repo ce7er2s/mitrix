@@ -150,8 +150,7 @@ void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &C
 }
 
 int main() {
-	std::vector<std::wstring> on_startup = {L"startup.msh"};
-
+	std::vector<std::wstring> on_startup = {L"execute startup.msh"};
 	setlocale(LC_CTYPE, "");
 
 	std::vector<Matrix<MATRIX_T>> MatrixSet(10);

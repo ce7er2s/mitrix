@@ -223,6 +223,7 @@ template <typename T> void Handlers::FillMatrixHandler(
 			} else {
 				throw ERRORS::INVALID_ARGUMENT;
 			}
+			break;
 		}
 		default: {
 			throw ERRORS::INVALID_ARGUMENT;
