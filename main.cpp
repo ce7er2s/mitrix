@@ -116,9 +116,11 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 19: { // Поэлементное деление матриц
 				Handlers::DivisionByMatrixHandler(MatrixSet, Arguments);
 				break;
-			} case 20: { // Выход
+			} case 20: {
+				ostream << L"Не пали контору." << std::endl;
+			} case 21: { // Выход
 				return -1;
-			} case 21: { // Пустая строка
+			} case 22: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
 				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
@@ -135,14 +137,24 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 }
 // TODO: сделать нормальную обработку ошибок через std::exception
 
+void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
+			 std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
+	std::wstringstream ostream;
+	std::wstringstream istream;
+
+	for (std::wstring& str: Settings) {
+		istream << str << std::endl;
+	}
+
+	Dispatcher(ostream, istream, CommandMapping, Exceptions, MatrixSet, Prompt);
+}
+
 int main() {
+	std::vector<std::wstring> on_startup = {L"startup.msh"};
+
 	setlocale(LC_CTYPE, "");
 
-	std::vector<Matrix<MATRIX_T>> matrixSet(10);
-	for (Matrix<MATRIX_T> &matrix: matrixSet) {
-		matrix.ResizeTo(0, 0);
-		//matrix.FillStorage('r', 0, -10, 10);
-	}
+	std::vector<Matrix<MATRIX_T>> MatrixSet(10);
 
 	auto& ostream = std::wcout;
 	auto& istream = std::wcin;
@@ -167,8 +179,9 @@ int main() {
 			{L"matrix-", 		17},
 			{L"matrix*", 		18},
 			{L"matrix/",  	19},
-			{L"exit", 		20},
-			{L"", 			21}
+			{L"iddqd",	   	20},
+			{L"exit", 		21},
+			{L"", 			22}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
@@ -186,9 +199,18 @@ int main() {
 
 	time_t timestamp = std::time(nullptr);
 	ostream << "Mitrix v1.0 at " << std::ctime(&timestamp);
+	ostream << "Matrices count: " << MatrixSet.size() << std::endl;
+	if (!on_startup.empty()) {
+		ostream << "On StartUp: " << on_startup[0] << std::endl;
+		for (size_t i = 1; i < on_startup.size(); i++) {
+			ostream << std::setw(12) << "" << on_startup[i] << std::endl;
+		}
+	}
+
+	StartUp(on_startup, CommandMapping, Exceptions, MatrixSet, L"");
 
 	int run_code = 0;
 	while (!run_code)
-		run_code = Dispatcher(ostream, istream, CommandMapping, Exceptions, matrixSet, L">>> ");
+		run_code = Dispatcher(ostream, istream, CommandMapping, Exceptions, MatrixSet, L">>> ");
 }
 // mitrix-cli */
