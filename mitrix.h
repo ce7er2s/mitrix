@@ -34,15 +34,6 @@ public:
 	void DivisionByScalar(T _value);
 
 	T DeterminantOf();
-
-	/*	void inputFrom(std::istream& _istream = std::cin, uint32_t _rows = 0, uint32_t _columns = 0);
-	void printTo(std::ostream& _ostream = std::cout);
-	void printFormatTo(std::ostream& _ostream = std::cout, char precision = 2); */
-
-	/*	T operator~ ();
-
-	Matrix<T> operator* (Matrix<T>& _matrix);
-	void operator*= (Matrix<T>& _matrix); */
 };
 
 #include "mitrix.hpp"

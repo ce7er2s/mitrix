@@ -193,8 +193,7 @@ template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T
 		} else {
 			throw ERRORS::INVALID_ARGUMENT;	// Ошибка ненайденной матрицы
 		}
-	}
-	catch (...) {
+	} catch (...) {
 		throw;  // Неизвестная ошибка
 	}
 }

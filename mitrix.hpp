@@ -70,30 +70,25 @@ template <typename T> void Matrix<T>::MultiplyWith(Matrix& _matrix) {
 }
 
 template <typename T> T Matrix<T>::DeterminantOf() {
-	if (this->rows == this->columns) { // Вычисляется только для кавдратной матрицы
-		if (this->rows == 2) { // Конечный случай для 2x2 матрицы
-			return (this->_storage[0][0]*this->_storage[1][1]) - (this->_storage[0][1]*this->_storage[1][0]);
-		} else if (this->rows == 1) {
-			return this->_storage[0][0]; // Отдельный случай.
-		} else {
-			T determinant = 0;
-			for (uint32_t j = 0; j < this->columns; j++) {
-				// Зачем умножать, если это ноль?
-				if (this->_storage[0][j] == 0) {
-					continue;
-				}
-				Matrix<T> submatrix = this->submatrixOf(0, j);
-				if (j % 2 == 0) { // Миноры одной строчки.
-					determinant += this->_storage[0][j] * submatrix.determinantOf();
-				} else { // Для "четных" элементов произведение элемента и детерминанта его минора складывается и наоборот.
-					determinant -= this->_storage[0][j] * submatrix.determinantOf();
-				}
+	if (this->rows == 2) { // Конечный случай для 2x2 матрицы
+		return (this->_storage[0][0]*this->_storage[1][1]) - (this->_storage[0][1]*this->_storage[1][0]);
+	} else if (this->rows == 1) {
+		return this->_storage[0][0]; // Отдельный случай.
+	} else {
+		T determinant = 0;
+		for (uint32_t j = 0; j < this->columns; j++) {
+			// Зачем умножать, если это ноль?
+			if (this->_storage[0][j] == 0) {
+				continue;
 			}
-			return determinant;
+			Matrix<T> submatrix = this->submatrixOf(0, j);
+			if (j % 2 == 0) { // Миноры одной строчки.
+				determinant += this->_storage[0][j] * submatrix.determinantOf();
+			} else { // Для "четных" элементов произведение элемента и детерминанта его минора складывается и наоборот.
+				determinant -= this->_storage[0][j] * submatrix.determinantOf();
+			}
 		}
-	}
-	else {
-		throw std::exception(); // Я не знаю, что тут возвращать. Нужен какой-то NONE; сейчас тут throw
+		return determinant;
 	}
 }
 
