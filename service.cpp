@@ -143,28 +143,6 @@ template <typename T> void Handlers::FormatOutputHandler(
 	}
 }
 
-template <typename T> void Handlers::MatrixMultiplicationHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
-	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки
-	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]); // Получение ссылки
-	auto& matrix3 = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]); // Получение ссылки
-	if (matrix2.columns != matrix3.rows) {
-		throw ERRORS::MULTIPLICATION_IMPOSSIBLE; // Проверки
-	}
-	matrix1 = Matrix<T>(matrix2, matrix3);
-}
-
-template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
-	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
-	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]); // Получение ссылки на матрицу
-	if (matrix1.columns != matrix2.rows) {
-		throw ERRORS::MULTIPLICATION_IMPOSSIBLE; //  Проверки
-	}
-	matrix1.MultiplyWith(matrix2); // умножение
-	ostream << "Successful!";
-}
-
 template <typename T> void Handlers::DeterminantHandler(
 		std::vector<Matrix<T>>& MatrixSet,  std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
@@ -199,7 +177,7 @@ template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T
 }
 
 template <typename T> void Handlers::SetNameHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	for (auto& matrix: MatrixSet) {
 		if (matrix.name != L"" && matrix.name == Arguments[2]) {
 			throw ERRORS::NAME_ALREADY_EXISTS;
@@ -210,7 +188,7 @@ template <typename T> void Handlers::SetNameHandler(
 }
 
 template <typename T> void Handlers::FillMatrixHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	u_char mode = 0;
 	if (!Arguments[2].empty()) {
@@ -248,7 +226,7 @@ template <typename T> void Handlers::FillMatrixHandler(
 }
 
 template <typename T> void Handlers::ResizeMatrixHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	uint32_t rows = std::stoul(Arguments[2]);
 	uint32_t columns = std::stoul(Arguments[3]);
@@ -258,19 +236,29 @@ template <typename T> void Handlers::ResizeMatrixHandler(
 	matrix.ResizeTo(rows, columns);
 }
 
-template <typename T> void Handlers::MultiplyWithHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	if (matrix1.columns != matrix2.rows) {
 		throw ERRORS::MULTIPLICATION_IMPOSSIBLE;
+	} else if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
 	}
 	matrix1.MultiplyWith(matrix2);
 }
 
-template <typename T> void Handlers::MultiplyByMatrixHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream = std::wcout) {
-
+template <typename T> void Handlers::MatrixMultiplicationHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	auto& matrix3 = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
+	if (matrix2.columns != matrix3.rows) {
+		throw ERRORS::MULTIPLICATION_IMPOSSIBLE;
+	} else if (matrix2.rows == 0 || matrix2.columns == 0 || matrix3.rows == 0 || matrix3.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1 = Matrix<T>(matrix2, matrix3);
 }
 
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {

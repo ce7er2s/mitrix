@@ -46,12 +46,10 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			case 1: { // Вывод списка.
 				Handlers::ListHandler<MATRIX_T>(MatrixSet,Arguments, ostream);  // Вывод списка матриц.
 				break;
-			}
-			case 2: { // Красивый вывод
+			} case 2: { // Красивый вывод
 				Handlers::FormatOutputHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				break;									// Форматированный вывод матрицы
-			}
-			case 3: { // Стандартный ввод
+			} case 3: { // Стандартный ввод
 				if (!Arguments[2].empty()) {
 					auto file = Handlers::OpenIFileHandler(Arguments[2]);
 					Handlers::InputHandler<MATRIX_T>(MatrixSet, Arguments, file);
@@ -61,8 +59,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 					std::getline(istream, to_parse); // После ввода почему-то считывается пустая строка, это фикс
 				}
 				break;
-			}
-			case 4: { // Стандартный вывод
+			} case 4: { // Стандартный вывод
 				if (!Arguments[2].empty()) {
 					auto file = Handlers::OpenOFileHandler(Arguments[2]);
 					Handlers::OutputHandler<MATRIX_T>(MatrixSet, Arguments, file);
@@ -71,37 +68,34 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 					Handlers::OutputHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				}
 				break;
-			}
-			case 5: {
+			} case 5: {
 				auto script = Handlers::OpenIFileHandler(Arguments[1]);
 				while (!script.eof()) {
 					Dispatcher(ostream, script, CommandMapping, Exceptions, MatrixSet, L"");
 				}
 				break;
-			}
-			case 6: {
-				Handlers::SetNameHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
+			} case 6: {
+				Handlers::SetNameHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			}
-			case 7: {
-				Handlers::FillMatrixHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
+			} case 7: {
+				Handlers::FillMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			}
-			case 8: {
-				Handlers::ResizeMatrixHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
+			} case 8: {
+				Handlers::ResizeMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			}
-			case 9: {
-				ostream << "NOT IMPLEMENTED" << std::endl;
-			}
-			case 10: {
+			} case 9: {
+				Handlers::MatrixMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
+				break;
+			} case 10: {
+				Handlers::MatrixSelfMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
+				break;
+			} case 11: {
 				return -1;
-			}
-			case 11: {
+			} case 12: {
 				break;
-			}
-			default:
+			} default: {
 				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
+			}
 		}
 	} catch (const std::invalid_argument &invalidArgument) { // Обработка исключения std::stoi
 		ostream << "WRONG ARGUMENT in command: \"" << to_parse << "\"." << std::endl;
@@ -136,8 +130,9 @@ int main() {
 			{L"fill", 7},
 			{L"resize", 8},
 			{L"multiply", 9},
-			{L"exit", 10},
-			{L"", 11}
+			{L"multiplywith", 10},
+			{L"exit", 11},
+			{L"", 12}
 	};
 
 	std::map<int, std::wstring> Exceptions = {

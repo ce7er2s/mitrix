@@ -30,17 +30,6 @@ namespace Handlers {
 			std::basic_ostream<wchar_t>& ostream
 			);
 
-	template <typename T> void MatrixMultiplicationHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream
-			);
-
-	template <typename T> void MatrixSelfMultiplicationHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
-			);
 
 	template <typename T> void DeterminantHandler(
 			std::vector<Matrix<T>>& MatrixSet,
@@ -48,35 +37,15 @@ namespace Handlers {
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
-	template <typename T> void SetNameHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
-			);
+	template <typename T> void SetNameHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
-	template <typename T> void FillMatrixHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
-	);
+	template <typename T> void FillMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
-	template <typename T> void ResizeMatrixHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
-	);
+	template <typename T> void ResizeMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
-	template <typename T> void MultiplyWithHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
-	);
+	template <typename T> void MatrixMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
-	template <typename T> void MultiplyByMatrixHandler(
-			std::vector<Matrix<T>>& MatrixSet,
-			std::vector<std::wstring>& Arguments,
-			std::basic_ostream<wchar_t>& ostream = std::wcout
-	);
+	template <typename T> void MatrixSelfMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
 	template <typename T> Matrix<T>& GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index);
 

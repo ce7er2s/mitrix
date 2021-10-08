@@ -11,7 +11,7 @@ template <typename T> Matrix<T>::Matrix(Matrix<T> _matrix_1, Matrix _matrix_2) {
 	this->rows = _matrix_1.rows;
 	this->columns = _matrix_1.columns;
 	this->_storage.swap(_matrix_1._storage); // Копирование матрицы и её атрибутов.
-	this->multiplyWith(_matrix_2);			// Умножение на вторую матрицу
+	this->MultiplyWith(_matrix_2);			// Умножение на вторую матрицу
 }
 
 template <typename T> Matrix<T>::Matrix(uint32_t _rows, uint32_t _columns, std::vector<std::vector<T>>* _storage) {
