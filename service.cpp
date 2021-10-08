@@ -146,10 +146,15 @@ template <typename T> void Handlers::FormatOutputHandler(
 template <typename T> void Handlers::DeterminantHandler(
 		std::vector<Matrix<T>>& MatrixSet,  std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
+	u_char precision = 4;
 	if (matrix.rows != matrix.columns) {	// TODO: проверь в отладчике, что копирует, а что передает ссылку auto или auto&
 		throw ERRORS::NO_DETERMINANT;	// Простая проверка
 	}
-	ostream << "DETERMINANT IS " << matrix.DeterminantOf() << ".";
+	if (!Arguments[2].empty()) {
+		precision = std::stoul(Arguments[2]);
+	}
+	ostream << std::setprecision(precision);
+	ostream << "DETERMINANT IS " << matrix.DeterminantOf() << std::endl;
 }
 
 template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index) {
