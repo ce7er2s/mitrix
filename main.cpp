@@ -68,32 +68,59 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 					Handlers::OutputHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				}
 				break;
-			} case 5: {
+			} case 5: { // Execute
 				auto script = Handlers::OpenIFileHandler(Arguments[1]);
 				while (!script.eof()) {
 					Dispatcher(ostream, script, CommandMapping, Exceptions, MatrixSet, L"");
 				}
 				break;
-			} case 6: {
+			} case 6: { // Установка имени
 				Handlers::SetNameHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			} case 7: {
+			} case 7: { // Заполнение
 				Handlers::FillMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			} case 8: {
+			} case 8: {	// Переразметка
 				Handlers::ResizeMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			} case 9: {
+			} case 9: {  // Умножение матриц
 				Handlers::MatrixMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			} case 10: {
+			} case 10: { // Умножение самой матрицы (*=)
 				Handlers::MatrixSelfMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
-			} case 11: {
-				return -1;
-			} case 12: {
+			} case 11: {	// Вывод детерминанта.
+				Handlers::DeterminantHandler(MatrixSet, Arguments, ostream);
 				break;
-			} default: {
+			} case 12: { // Сложение со скаляром
+				Handlers::AdditionByScalarHandler(MatrixSet, Arguments);
+				break;
+			} case 13: { // Вычитание скаляра. Так. Нахуя я делал две одинаковые функции. ЛОЛ
+				Handlers::SubtractionByScalarHandler(MatrixSet, Arguments);
+				break;
+			} case 14: { // Умножение на скаляр
+				Handlers::MultiplicationByScalarHandler(MatrixSet, Arguments);
+				break;
+			} case 15: { // Деление на скаляр
+				Handlers::DivisionByScalarHandler(MatrixSet, Arguments);
+				break;
+			} case 16: { // Поэлементное сложение матриц
+				Handlers::AdditionByMatrixHandler(MatrixSet, Arguments);
+				break;
+			} case 17: { // Поэлементное сложение матриц
+				Handlers::SubtractionByMatrixHandler(MatrixSet, Arguments);
+				break;
+			} case 18: { // Поэлементное умножение матриц
+				Handlers::MultiplicationByMatrixHandler(MatrixSet, Arguments);
+				break;
+			} case 19: { // Поэлементное деление матриц
+				Handlers::DivisionByMatrixHandler(MatrixSet, Arguments);
+				break;
+			} case 20: { // Выход
+				return -1;
+			} case 21: { // Пустая строка
+				break;
+			} default: { // Команда не найдена
 				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
 			}
 		}
@@ -121,28 +148,38 @@ int main() {
 	auto& istream = std::wcin;
 
 	std::map<std::wstring, int> CommandMapping = {
-			{L"list",1},
-			{L"print", 2},
-			{L"input", 3},
-			{L"output", 4},
-			{L"execute", 5},
-			{L"name", 6},
-			{L"fill", 7},
-			{L"resize", 8},
-			{L"multiply", 9},
-			{L"multiplywith", 10},
-			{L"exit", 11},
-			{L"", 12}
+			{L"list",			 1},
+			{L"print", 		 2},
+			{L"input", 		 3},
+			{L"output", 		 4},
+			{L"execute", 		 5},
+			{L"name", 		 6},
+			{L"fill", 		 7},
+			{L"resize", 		 8},
+			{L"multiply",  	 9},
+			{L"multiplywith",	10},
+			{L"determinant", 	11},
+			{L"scalar+", 		12},
+			{L"scalar-", 		13},
+			{L"scalar*", 		14},
+			{L"scalar/", 		15},
+			{L"matrix+", 		16},
+			{L"matrix-", 		17},
+			{L"matrix*", 		18},
+			{L"matrix/",  	19},
+			{L"exit", 		20},
+			{L"", 			21}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
+			{0, L"DIVISION BY ZERO"},
 			{1, L"NEGATIVE ARGUMENT"},
 			{2, L"FILE NOT FOUND"},
 			{3, L"ZERO LENGTH"},
 			{4, L"DETERMINANT IS ZERO"},
 			{5, L"MULTIPLICATION IMPOSSIBLE"},
 			{6, L"MATRIX DOES NOT EXIST"},
-			{7, L"UNKNOWN ERROR"},
+			{7, L"SIZES DO NOT MATCH"},
 			{8, L"INVALID ARGUMENT"},
 			{9, L"NAME ALREADY EXISTS"}
 	};

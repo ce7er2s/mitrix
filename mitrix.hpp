@@ -81,11 +81,11 @@ template <typename T> T Matrix<T>::DeterminantOf() {
 			if (this->_storage[0][j] == 0) {
 				continue;
 			}
-			Matrix<T> submatrix = this->submatrixOf(0, j);
+			Matrix<T> submatrix = this->SubmatrixOf(0, j);
 			if (j % 2 == 0) { // Миноры одной строчки.
-				determinant += this->_storage[0][j] * submatrix.determinantOf();
+				determinant += this->_storage[0][j] * submatrix.DeterminantOf();
 			} else { // Для "четных" элементов произведение элемента и детерминанта его минора складывается и наоборот.
-				determinant -= this->_storage[0][j] * submatrix.determinantOf();
+				determinant -= this->_storage[0][j] * submatrix.DeterminantOf();
 			}
 		}
 		return determinant;

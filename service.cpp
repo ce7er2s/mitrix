@@ -3,14 +3,14 @@
 //
 
 enum ERRORS {
-	OK = 0,
+	DIVISION_BY_ZERO = 0,
 	NEGATIVE_ARG = 1,
 	FILE_NOT_FOUND = 2,
 	ZERO_LENGTH = 3,
 	NO_DETERMINANT = 4,
 	MULTIPLICATION_IMPOSSIBLE = 5,
 	MATRIX_DOES_NOT_EXIST = 6,
-	UNKNOWN_ERROR = 7,
+	SIZES_DO_NOT_MATCH = 7,
 	INVALID_ARGUMENT = 8,
 	NAME_ALREADY_EXISTS = 9
 };
@@ -18,7 +18,7 @@ enum ERRORS {
 template <typename T> void Handlers::ListHandler(
 		std::vector<Matrix<T>>& MatrixSet,  std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	ostream << std::setw(2) << L"#" << "|";  // Отрисовка шапки
-	ostream << std::setw(5) << L"ROWS" << "|"; 
+	ostream << std::setw(5) << L"ROWS" << "|";
 	ostream << std::setw(8) << L"COLUMNS" << "|";
 	ostream << std::setw(14) << L"STORAGE" << "|";
 	ostream << std::setw(5) << L"NAME" << std::endl;
@@ -149,7 +149,7 @@ template <typename T> void Handlers::DeterminantHandler(
 	if (matrix.rows != matrix.columns) {	// TODO: проверь в отладчике, что копирует, а что передает ссылку auto или auto&
 		throw ERRORS::NO_DETERMINANT;	// Простая проверка
 	}
-	ostream << "Determinant is " << matrix.DeterminantOf() << ".";
+	ostream << "DETERMINANT IS " << matrix.DeterminantOf() << ".";
 }
 
 template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index) {
@@ -190,7 +190,7 @@ template <typename T> void Handlers::SetNameHandler(
 template <typename T> void Handlers::FillMatrixHandler(
 		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
-	u_char mode = 0;
+	u_char mode;
 	if (!Arguments[2].empty()) {
 		mode = Arguments[2][0];
 	} else {
@@ -212,12 +212,12 @@ template <typename T> void Handlers::FillMatrixHandler(
 			break;
 		}
 		case 'c': {
-			T value = 0.0;
 			if (!Arguments[3].empty()) {
-				value = std::stod(Arguments[3]);
+				T value = std::stod(Arguments[3]);
 				matrix.FillStorage(mode, value);
+			} else {
+				throw ERRORS::INVALID_ARGUMENT;
 			}
-			break;
 		}
 		default: {
 			throw ERRORS::INVALID_ARGUMENT;
@@ -259,6 +259,93 @@ template <typename T> void Handlers::MatrixMultiplicationHandler(
 		throw ERRORS::ZERO_LENGTH;
 	}
 	matrix1 = Matrix<T>(matrix2, matrix3);
+}
+
+template <typename T> void Handlers::MultiplicationByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	if ((matrix1.rows != matrix2.rows) || (matrix1.columns != matrix2.columns)) {
+		throw ERRORS::SIZES_DO_NOT_MATCH;
+	}
+	if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.MultiplicationByMatrix(matrix2);
+ }
+
+template <typename T> void Handlers::AdditionByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	if ((matrix1.rows != matrix2.rows) || (matrix1.columns != matrix2.columns)) {
+		throw ERRORS::SIZES_DO_NOT_MATCH;
+	}
+	if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.AdditionByMatrix(matrix2);
+}
+
+template <typename T> void Handlers::SubtractionByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	if ((matrix1.rows != matrix2.rows) || (matrix1.columns != matrix2.columns)) {
+		throw ERRORS::SIZES_DO_NOT_MATCH;
+	}
+	if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.SubtractionByMatrix(matrix2);
+}
+
+template <typename T> void Handlers::DivisionByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	if ((matrix1.rows != matrix2.rows) || (matrix1.columns != matrix2.columns)) {
+		throw ERRORS::SIZES_DO_NOT_MATCH;
+	}
+	if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.DivisionByMatrix(matrix2);
+}
+
+template <typename T> void Handlers::MultiplicationByScalarHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	double value = std::stod(Arguments[2]);
+	if (matrix1.rows == 0 || matrix1.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.MultiplicationByScalar(value);
+}
+
+template <typename T> void Handlers::AdditionByScalarHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	double value = std::stod(Arguments[2]);
+	if (matrix1.rows == 0 || matrix1.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.AdditionByScalar(value);
+}
+
+template <typename T> void Handlers::SubtractionByScalarHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	double value = std::stod(Arguments[2]);
+	if (matrix1.rows == 0 || matrix1.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	if (value == 0) {
+		throw ERRORS::DIVISION_BY_ZERO;
+	}
+	matrix1.SubtractionByScalar(value);
+}
+
+template <typename T> void Handlers::DivisionByScalarHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	double value = std::stod(Arguments[2]);
+	if (matrix1.rows == 0 || matrix1.columns == 0) {
+		throw ERRORS::ZERO_LENGTH;
+	}
+	matrix1.DivisionByScalar(value);
 }
 
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {
