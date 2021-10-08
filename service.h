@@ -66,6 +66,18 @@ namespace Handlers {
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 	);
 
+	template <typename T> void MultiplyWithHandler(
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_ostream<wchar_t>& ostream = std::wcout
+	);
+
+	template <typename T> void MultiplyByMatrixHandler(
+			std::vector<Matrix<T>>& MatrixSet,
+			std::vector<std::wstring>& Arguments,
+			std::basic_ostream<wchar_t>& ostream = std::wcout
+	);
+
 	template <typename T> Matrix<T>& GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index);
 
 	std::basic_ifstream<wchar_t> OpenIFileHandler(std::wstring& path);

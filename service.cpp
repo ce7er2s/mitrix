@@ -258,6 +258,21 @@ template <typename T> void Handlers::ResizeMatrixHandler(
 	matrix.ResizeTo(rows, columns);
 }
 
+template <typename T> void Handlers::MultiplyWithHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	if (matrix1.columns != matrix2.rows) {
+		throw ERRORS::MULTIPLICATION_IMPOSSIBLE;
+	}
+	matrix1.MultiplyWith(matrix2);
+}
+
+template <typename T> void Handlers::MultiplyByMatrixHandler(
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream = std::wcout) {
+
+}
+
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {
 	std::filesystem::path filepath(path);
 	std::basic_ifstream<wchar_t> file(filepath);
