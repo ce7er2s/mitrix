@@ -26,10 +26,12 @@ std::vector<std::wstring> ParseArguments(const std::wstring& to_parse) {
 }
 
 using MATRIX_T = double;
+using u_char = unsigned char;
 
 int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
 		   std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
-		   std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
+           std::map<std::wstring, std::wstring>& Help, std::vector<Matrix<MATRIX_T>> &MatrixSet,
+           const std::wstring& Prompt) {
 
 	ostream << Prompt;
 	
@@ -71,7 +73,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 5: { // Execute
 				auto script = Handlers::OpenIFileHandler(Arguments[1]);
 				while (!script.eof()) {
-					Dispatcher(ostream, script, CommandMapping, Exceptions, MatrixSet, L"");
+					Dispatcher(ostream, script, CommandMapping, Exceptions, Help, MatrixSet, L"");
 				}
 				break;
 			} case 6: { // Установка имени
@@ -117,10 +119,14 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::DivisionByMatrixHandler(MatrixSet, Arguments);
 				break;
 			} case 20: {
-				ostream << L"Не пали контору." << std::endl;
-			} case 21: { // Выход
+                ostream << L"Не пали контору." << std::endl;
+                break;
+            } case 21: {
+                Handlers::HelpHandler(MatrixSet, Arguments, Help, ostream);
+                break;
+			} case 22: { // Выход
 				return -1;
-			} case 22: { // Пустая строка
+			} case 23: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
 				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
@@ -138,7 +144,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 // TODO: сделать нормальную обработку ошибок через std::exception
 
 void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
-			 std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
+             std::map<std::wstring, std::wstring>& Help, std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
 	std::wstringstream ostream;
 	std::wstringstream istream;
 
@@ -146,7 +152,7 @@ void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &C
 		istream << str << std::endl;
 	}
 
-	Dispatcher(ostream, istream, CommandMapping, Exceptions, MatrixSet, Prompt);
+	Dispatcher(ostream, istream, CommandMapping, Exceptions, Help, MatrixSet, Prompt);
 }
 
 int main() {
@@ -179,22 +185,47 @@ int main() {
 			{L"matrix*", 		18},
 			{L"matrix/",  	19},
 			{L"iddqd",	   	20},
-			{L"exit", 		21},
-			{L"", 			22}
+			{L"help",	   	21},
+			{L"exit", 		22},
+			{L"", 			23}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
-			{0, L"DIVISION BY ZERO"},
-			{1, L"NEGATIVE ARGUMENT"},
-			{2, L"FILE NOT FOUND"},
-			{3, L"ZERO LENGTH"},
-			{4, L"DETERMINANT IS ZERO"},
-			{5, L"MULTIPLICATION IMPOSSIBLE"},
-			{6, L"MATRIX DOES NOT EXIST"},
-			{7, L"SIZES DO NOT MATCH"},
-			{8, L"INVALID ARGUMENT"},
-			{9, L"NAME ALREADY EXISTS"}
+			 {0, L"DIVISION BY ZERO"},
+			 {1, L"NEGATIVE ARGUMENT"},
+			 {2, L"FILE NOT FOUND"},
+			 {3, L"ZERO LENGTH"},
+			 {4, L"DETERMINANT IS ZERO"},
+			 {5, L"MULTIPLICATION IMPOSSIBLE"},
+			 {6, L"MATRIX DOES NOT EXIST"},
+			 {7, L"SIZES DO NOT MATCH"},
+			 {8, L"INVALID ARGUMENT"},
+			 {9, L"NAME ALREADY EXISTS"},
+            {10, L"HELP_STRING_IS_NOT_FOUND"}
 	};
+
+    std::map<std::wstring, std::wstring> Help = {
+            {L"list", L" -- вывод списка матриц"},
+            {L"print", L" номер_матрицы [точность_вывода = 4] -- красивый вывод в консоль"},
+            {L"input", L" номер_матрицы  [имя_файла] -- ввод файла"},
+            {L"output", L" номер_матрицы [имя_файла] -- вывод матрицы"},
+            {L"execute", L" имя_файла -- исполнение файла"},
+            {L"name", L" номер_матрицы псевдоним_матрицы -- задание имени матрицы. Затем можно использовать вместо номера"},
+            {L"fill", L" режим_заполнения [границы диапазона, значение] -- заполнение матрицы"},
+            {L"resize", L" номер_матрицы новый_размер1 новый_размер2 -- изменение размера"},
+            {L"multiply", L" номер_матрицы1 номер _матрицы2 номер_матрицы3 -- умножение матриц 2 и 3, и запись в матрицу1"},
+            {L"multiplywith", L" номер_матрицы1 номер_матрицы2 -- умножение матрицы 1 на матрицу 2"},
+            {L"determinant", L" номер_матрицы -- вывод детерминанта матрицы"},
+            {L"scalar+", L" номер_матрицы скаляр -- сложение со скаляром"},
+            {L"scalar-", L" номер_матрицы скаляр -- вычитание скаляра"},
+            {L"scalar*", L" номер_матрицы скаляр -- умножение на скаляр"},
+            {L"scalar/", L" номер_матрицы скаляр -- деление на скаляр"},
+            {L"matrix+", L" номер_матрицы1 номер_матрицы2-- сложение с матрицы 1 с матрицей 2. Результат в матрице1"},
+            {L"matrix-", L" номер_матрицы1 номер_матрицы2 -- вычитание матрицы 2 из матрицей 1. Результат в матрице1"},
+            {L"matrix*", L" номер_матрицы1 номер_матрицы2 -- умножение матрицы 1 на матрицу 2. Результат в матрице1"},
+            {L"matrix/", L" номер_матрицы1 номер_матрицы2 -- деление матрицы 1 на матрицу 2. Результат в матрице1"},
+            {L"exit", L" -- выход"}
+    };
 
 	time_t timestamp = std::time(nullptr);
 	ostream << "Mitrix v1.0 at " << std::ctime(&timestamp);
@@ -206,10 +237,10 @@ int main() {
 		}
 	}
 
-	StartUp(on_startup, CommandMapping, Exceptions, MatrixSet, L"");
+	StartUp(on_startup, CommandMapping, Exceptions, Help, MatrixSet, L"");
 
 	int run_code = 0;
 	while (!run_code)
-		run_code = Dispatcher(ostream, istream, CommandMapping, Exceptions, MatrixSet, L">>> ");
+		run_code = Dispatcher(ostream, istream, CommandMapping, Exceptions, Help, MatrixSet, L">>> ");
 }
 // mitrix-cli */

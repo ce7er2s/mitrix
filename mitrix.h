@@ -20,7 +20,7 @@ public:
 	Matrix<T> SubmatrixOf (uint32_t _row, uint32_t _column);
 
 	void ResizeTo(uint32_t _rows, uint32_t _columns);
-	void FillStorage(u_char mode = 'r', T value = 0, T left_border = 0, T right_border = 0);
+	void FillStorage(unsigned char mode = 'r', T value = 0, T left_border = 0, T right_border = 0);
 
 	void MultiplyWith(Matrix& _matrix);
 	void MultiplicationByMatrix(Matrix<T>& _matrix);

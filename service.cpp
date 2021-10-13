@@ -1,3 +1,6 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "hicpp-exception-baseclass"
+#pragma ide diagnostic ignored "misc-throw-by-value-catch-by-reference"
 //
 // Created by reenie on 27.09.2021.
 //
@@ -12,7 +15,8 @@ enum ERRORS {
 	MATRIX_DOES_NOT_EXIST = 6,
 	SIZES_DO_NOT_MATCH = 7,
 	INVALID_ARGUMENT = 8,
-	NAME_ALREADY_EXISTS = 9
+	NAME_ALREADY_EXISTS = 9,
+	HELP_STRING_IS_NOT_FOUND = 10
 };
 
 template <typename T> void Handlers::ListHandler(
@@ -86,7 +90,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 		throw ERRORS::ZERO_LENGTH;
 	}
 
-	u_char precision = 4;  // Стандартное значение
+	unsigned char precision = 4;  // Стандартное значение
 	if (!Arguments[2].empty()) { // Если второй аргумент не пустой, попытаться поменять точность. В случае ошибки дернуть исключение
 		try {
 			precision = std::stoi(Arguments[2]);
@@ -109,12 +113,12 @@ template <typename T> void Handlers::FormatOutputHandler(
 			element_max_size = std::max(element_max_size, printer.str().length());
 			printer.str(L"");
 		}
-		columns_max_size = std::max(columns_max_size, std::to_wstring(row.size()).length());
+		columns_max_size = std::max(columns_max_size, std::to_string(row.size()).length());
 	}
 
 	element_max_size = std::max(element_max_size, columns_max_size);  // Поиск наибольшего
 	auto cell_size = static_cast<int32_t>(element_max_size) + 1;                                  // И его общая запись
-	auto rows_size = static_cast<u_char>(columns_max_size) + 1;
+	auto rows_size = static_cast<unsigned char>(columns_max_size) + 1;
 	// +1 для отступа.
 	ostream << std::fixed << std::setprecision(precision);
 
@@ -146,7 +150,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 template <typename T> void Handlers::DeterminantHandler(
 		std::vector<Matrix<T>>& MatrixSet,  std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
-	u_char precision = 4;
+	unsigned char precision = 4;
 	if (matrix.rows != matrix.columns) {	// TODO: проверь в отладчике, что копирует, а что передает ссылку auto или auto&
 		throw ERRORS::NO_DETERMINANT;	// Простая проверка
 	}
@@ -155,6 +159,26 @@ template <typename T> void Handlers::DeterminantHandler(
 	}
 	ostream << std::setprecision(precision);
 	ostream << "DETERMINANT IS " << matrix.DeterminantOf() << std::endl;
+}
+
+template <typename T> void Handlers::HelpHandler(
+        std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments,
+        std::map<std::wstring, std::wstring> Help, std::basic_ostream<wchar_t>& ostream) {
+    if (!Arguments[1].empty()) {
+        std::wstring lower_arg1 = Arguments[1];
+        for (auto& letter: lower_arg1) {
+            letter = std::tolower(letter);
+        }
+        if (Help.contains(lower_arg1)) {
+            ostream << lower_arg1 << Help[lower_arg1] << std::endl;
+        } else {
+            throw ERRORS::HELP_STRING_IS_NOT_FOUND;
+        }
+    } else {
+        for (const auto& command: Help) {
+            ostream << command.first << command.second << std::endl;
+        }
+    }
 }
 
 template <typename T> Matrix<T>& Handlers::GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index) {
@@ -195,7 +219,7 @@ template <typename T> void Handlers::SetNameHandler(
 template <typename T> void Handlers::FillMatrixHandler(
 		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
-	u_char mode;
+	unsigned char mode;
 	if (!Arguments[2].empty()) {
 		mode = Arguments[2][0];
 	} else {
@@ -371,3 +395,7 @@ std::basic_ofstream<wchar_t> Handlers::OpenOFileHandler(std::wstring& path) {
 	}
 	return file;
 }
+
+
+
+#pragma clang diagnostic pop

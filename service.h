@@ -37,6 +37,12 @@ namespace Handlers {
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
+    template <typename T> void HelpHandler(std::vector<Matrix<T>>& MatrixSet,
+                     std::vector<std::wstring>& Arguments,
+                     std::map<std::wstring, std::wstring> Help,
+                     std::basic_ostream<wchar_t>& ostream
+                     );
+
 	template <typename T> void SetNameHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
 	template <typename T> void FillMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
@@ -46,7 +52,6 @@ namespace Handlers {
 	template <typename T> void MatrixMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
 	template <typename T> void MatrixSelfMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
-	
 	
 	template <typename T> void MultiplicationByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 	

@@ -92,7 +92,7 @@ template <typename T> T Matrix<T>::DeterminantOf() {
 	}
 }
 
-template <typename T> void Matrix<T>::FillStorage(u_char mode, T value, T left_border, T right_border) {
+template <typename T> void Matrix<T>::FillStorage(unsigned char mode, T value, T left_border, T right_border) {
 	switch (mode) {
 		case 'r': {
 			std::mt19937 source(value);
