@@ -37,8 +37,7 @@ namespace Handlers {
 			std::basic_ostream<wchar_t>& ostream = std::wcout
 			);
 
-    template <typename T> void HelpHandler(std::vector<Matrix<T>>& MatrixSet,
-                     std::vector<std::wstring>& Arguments,
+    void HelpHandler(std::vector<std::wstring>& Arguments,
                      std::map<std::wstring, std::wstring> Help,
                      std::basic_ostream<wchar_t>& ostream
                      );
@@ -70,6 +69,8 @@ namespace Handlers {
 	template <typename T> void DivisionByScalarHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
 	template <typename T> Matrix<T>& GetMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::wstring& index);
+
+	template <typename T> void SubmatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
 	std::basic_ifstream<wchar_t> OpenIFileHandler(std::wstring& path);
 

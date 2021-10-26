@@ -15,6 +15,8 @@ public:
 public:
 	std::vector<T>& operator[] (int32_t n);
 
+	~Matrix();
+
 	explicit Matrix (Matrix<T> _matrix_1, Matrix<T> _matrix_2);
 	explicit Matrix(uint32_t _rows = 0, uint32_t _columns = 0, std::vector<std::vector<T>>* _storage = nullptr);
 	Matrix<T> SubmatrixOf (uint32_t _row, uint32_t _column);

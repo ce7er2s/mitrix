@@ -161,8 +161,7 @@ template <typename T> void Handlers::DeterminantHandler(
 	ostream << "DETERMINANT IS " << matrix.DeterminantOf() << std::endl;
 }
 
-template <typename T> void Handlers::HelpHandler(
-        std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments,
+void Handlers::HelpHandler(std::vector<std::wstring>& Arguments,
         std::map<std::wstring, std::wstring> Help, std::basic_ostream<wchar_t>& ostream) {
     if (!Arguments[1].empty()) {
         std::wstring lower_arg1 = Arguments[1];
@@ -288,7 +287,9 @@ template <typename T> void Handlers::MatrixMultiplicationHandler(
 	} else if (matrix2.rows == 0 || matrix2.columns == 0 || matrix3.rows == 0 || matrix3.columns == 0) {
 		throw ERRORS::ZERO_LENGTH;
 	}
+	auto name = matrix1.name;
 	matrix1 = Matrix<T>(matrix2, matrix3);
+	matrix1.name = name;
 }
 
 template <typename T> void Handlers::MultiplicationByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
@@ -378,6 +379,16 @@ template <typename T> void Handlers::DivisionByScalarHandler(std::vector<Matrix<
 	matrix1.DivisionByScalar(value);
 }
 
+template <typename T> void Handlers::SubmatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	uint32_t row = std::stoul(Arguments[3]);
+	uint32_t column = std::stoul(Arguments[4]);
+	auto name = matrix1.name;
+	matrix1 = matrix2.SubmatrixOf(row, column);
+	matrix1.name = name;
+}
+
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {
 	std::filesystem::path filepath(path);
 	std::basic_ifstream<wchar_t> file(filepath);
@@ -397,5 +408,3 @@ std::basic_ofstream<wchar_t> Handlers::OpenOFileHandler(std::wstring& path) {
 }
 
 
-
-#pragma clang diagnostic pop

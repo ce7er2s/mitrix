@@ -26,6 +26,20 @@ template <typename T> Matrix<T>::Matrix(uint32_t _rows, uint32_t _columns, std::
 	}								// здесь добавить функцию get_storage c копированием массива для этого случая.
 }
 
+template <typename T> Matrix<T>::~Matrix () {
+	for (auto& row: this->_storage) {
+		row.clear();
+		row.shrink_to_fit();
+	}
+	this->_storage.clear();
+	this->_storage.shrink_to_fit();
+
+/*	delete &(this->_storage);
+	delete &(this->rows);
+	delete &(this->columns);
+	delete &(this->name); */
+}
+
 template <typename T> void Matrix<T>::ResizeTo(uint32_t _rows, uint32_t _columns) {
 	this->rows = _rows; // Запись размеров
 	this->columns = _columns;

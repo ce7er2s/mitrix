@@ -92,41 +92,43 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::MatrixSelfMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 11: {	// Вывод детерминанта.
-				Handlers::DeterminantHandler(MatrixSet, Arguments, ostream);
+				Handlers::DeterminantHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				break;
 			} case 12: { // Сложение со скаляром
-				Handlers::AdditionByScalarHandler(MatrixSet, Arguments);
+				Handlers::AdditionByScalarHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 13: { // Вычитание скаляра. Так. Нахуя я делал две одинаковые функции. ЛОЛ
-				Handlers::SubtractionByScalarHandler(MatrixSet, Arguments);
+				Handlers::SubtractionByScalarHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 14: { // Умножение на скаляр
-				Handlers::MultiplicationByScalarHandler(MatrixSet, Arguments);
+				Handlers::MultiplicationByScalarHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 15: { // Деление на скаляр
-				Handlers::DivisionByScalarHandler(MatrixSet, Arguments);
+				Handlers::DivisionByScalarHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 16: { // Поэлементное сложение матриц
-				Handlers::AdditionByMatrixHandler(MatrixSet, Arguments);
+				Handlers::AdditionByMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 17: { // Поэлементное сложение матриц
-				Handlers::SubtractionByMatrixHandler(MatrixSet, Arguments);
+				Handlers::SubtractionByMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 18: { // Поэлементное умножение матриц
-				Handlers::MultiplicationByMatrixHandler(MatrixSet, Arguments);
+				Handlers::MultiplicationByMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 19: { // Поэлементное деление матриц
-				Handlers::DivisionByMatrixHandler(MatrixSet, Arguments);
+				Handlers::DivisionByMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 20: {
-                ostream << L"Не пали контору." << std::endl;
+				Handlers::SubmatrixHandler<MATRIX_T>(MatrixSet, Arguments);
+			} case 21: {
+				ostream << L"Не пали контору." << std::endl;
+				break;
+			} case 22: {
+                Handlers::HelpHandler(Arguments, Help, ostream);
                 break;
-            } case 21: {
-                Handlers::HelpHandler(MatrixSet, Arguments, Help, ostream);
-                break;
-			} case 22: { // Выход
+			} case 23: { // Выход
 				return -1;
-			} case 23: { // Пустая строка
+			} case 24: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
 				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
@@ -184,10 +186,11 @@ int main() {
 			{L"matrix-", 		17},
 			{L"matrix*", 		18},
 			{L"matrix/",  	19},
-			{L"iddqd",	   	20},
-			{L"help",	   	21},
-			{L"exit", 		22},
-			{L"", 			23}
+			{L"submatrix",  	20},
+			{L"iddqd",	   	21},
+			{L"help",	   		22},
+			{L"exit", 		23},
+			{L"", 			24}
 	};
 
 	std::map<int, std::wstring> Exceptions = {
@@ -201,7 +204,7 @@ int main() {
 			 {7, L"SIZES DO NOT MATCH"},
 			 {8, L"INVALID ARGUMENT"},
 			 {9, L"NAME ALREADY EXISTS"},
-            {10, L"HELP_STRING_IS_NOT_FOUND"}
+            {10, L"HELP STRING IS NOT FOUND"}
 	};
 
     std::map<std::wstring, std::wstring> Help = {
@@ -213,7 +216,7 @@ int main() {
             {L"name", L" номер_матрицы псевдоним_матрицы -- задание имени матрицы. Затем можно использовать вместо номера"},
             {L"fill", L" режим_заполнения [границы диапазона, значение] -- заполнение матрицы"},
             {L"resize", L" номер_матрицы новый_размер1 новый_размер2 -- изменение размера"},
-            {L"multiply", L" номер_матрицы1 номер _матрицы2 номер_матрицы3 -- умножение матриц 2 и 3, и запись в матрицу1"},
+            {L"multiply", L" номер_матрицы1 номер_матрицы2 номер_матрицы3 -- умножение матриц 2 и 3, и запись в матрицу1"},
             {L"multiplywith", L" номер_матрицы1 номер_матрицы2 -- умножение матрицы 1 на матрицу 2"},
             {L"determinant", L" номер_матрицы -- вывод детерминанта матрицы"},
             {L"scalar+", L" номер_матрицы скаляр -- сложение со скаляром"},
@@ -224,6 +227,7 @@ int main() {
             {L"matrix-", L" номер_матрицы1 номер_матрицы2 -- вычитание матрицы 2 из матрицей 1. Результат в матрице1"},
             {L"matrix*", L" номер_матрицы1 номер_матрицы2 -- умножение матрицы 1 на матрицу 2. Результат в матрице1"},
             {L"matrix/", L" номер_матрицы1 номер_матрицы2 -- деление матрицы 1 на матрицу 2. Результат в матрице1"},
+            {L"submatrix", L" номер_матрицы1 номер_матрицы2 столбец строка -- нахождение подматрицы по координатам. Результат в матрице1"},
             {L"exit", L" -- выход"}
     };
 
