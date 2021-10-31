@@ -389,6 +389,16 @@ template <typename T> void Handlers::SubmatrixHandler(std::vector<Matrix<T>>& Ma
 	matrix1.name = name;
 }
 
+
+template <typename T> void Handlers::CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	auto* new_storage = new std::vector<std::vector<T>>;
+	std::copy(matrix2._storage.begin(), matrix2._storage.end(), std::back_inserter(*new_storage));
+	matrix1 = Matrix<T>(matrix2.rows, matrix2.columns, new_storage);
+}
+
+
 std::basic_ifstream<wchar_t> Handlers::OpenIFileHandler(std::wstring& path) {
 	std::filesystem::path filepath(path);
 	std::basic_ifstream<wchar_t> file(filepath);
