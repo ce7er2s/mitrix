@@ -389,13 +389,20 @@ template <typename T> void Handlers::SubmatrixHandler(std::vector<Matrix<T>>& Ma
 	matrix1.name = name;
 }
 
+template <typename T> void Handlers::TransposeHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	matrix.Transpose();
+}
+
 
 template <typename T> void Handlers::CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto* new_storage = new std::vector<std::vector<T>>;
+	auto name = matrix1.name;
 	std::copy(matrix2._storage.begin(), matrix2._storage.end(), std::back_inserter(*new_storage));
 	matrix1 = Matrix<T>(matrix2.rows, matrix2.columns, new_storage);
+	matrix1.name = name;
 }
 
 

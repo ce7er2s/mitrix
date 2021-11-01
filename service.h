@@ -35,6 +35,8 @@ public:
 	void SubtractionByScalar(T _value);
 	void DivisionByScalar(T _value);
 
+	void Transpose();
+
 	T DeterminantOf();
 };
 

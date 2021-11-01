@@ -128,11 +128,14 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::CopyMatrixHandler(MatrixSet, Arguments);
 				break;
 			} case 23: {
+				Handlers::TransposeHandler(MatrixSet, Arguments);
+				break;
+			} case 24: {
                 Handlers::HelpHandler(Arguments, Help, ostream);
                 break;
-			} case 24: { // Выход
+			} case 25: { // Выход
 				return -1;
-			} case 25: { // Пустая строка
+			} case 26: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
 				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
@@ -193,9 +196,10 @@ int main() {
 			{L"submatrix",  	20},
 			{L"iddqd",	   	21},
 			{L"copy",	   		22},
-			{L"help",	   		23},
-			{L"exit", 		24},
-			{L"", 			25}
+			{L"transpose",	23},
+			{L"help",	   		24},
+			{L"exit", 		25},
+			{L"", 			26}
 	};
 
 	std::map<int, std::wstring> Exceptions = {

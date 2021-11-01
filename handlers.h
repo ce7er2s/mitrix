@@ -74,6 +74,8 @@ namespace Handlers {
 
 	template <typename T> void CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
+	template <typename T> void TransposeHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
+
 	std::basic_ifstream<wchar_t> OpenIFileHandler(std::wstring& path);
 
 	std::basic_ofstream<wchar_t> OpenOFileHandler(std::wstring& path);

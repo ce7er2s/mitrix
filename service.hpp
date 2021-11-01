@@ -202,3 +202,20 @@ template <typename T> void Matrix<T>::DivisionByScalar(T _value) {
 		}
 	}
 }
+
+template <typename T> void Matrix<T>::Transpose() {
+	auto* temp_vector = new std::vector<std::vector<T>>;
+	temp_vector->resize(this->columns);
+	for (auto& row: *temp_vector) {
+		row.resize(this->rows);
+	}
+	for (size_t i = 0; i < this->rows; i++) {
+		for (size_t j = 0; j < this->columns; j++) {
+			temp_vector[j][i] = this->_storage[i][j];
+		}
+	}
+	this->_storage.swap(*temp_vector);
+	size_t temp = this->rows;
+	this->rows = this->columns;
+	this->columns = temp;
+}
