@@ -30,7 +30,7 @@ using MATRIX_T = double;
 using u_char = unsigned char;
 
 int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
-		   std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
+		   std::map<std::wstring, int> &CommandMapping,
            std::map<std::wstring, std::wstring>& Help, std::vector<Matrix<MATRIX_T>> &MatrixSet,
            const std::wstring& Prompt) {
 
@@ -74,7 +74,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 5: { // Execute
 				auto script = Handlers::OpenIFileHandler(Arguments[1]);
 				while (!script.eof()) {
-					Dispatcher(ostream, script, CommandMapping, Exceptions, Help, MatrixSet, L"");
+					Dispatcher(ostream, script, CommandMapping, Help, MatrixSet, L"");
 				}
 				break;
 			} case 6: { // Установка имени
@@ -156,7 +156,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 }
 // TODO: сделать нормальную обработку ошибок через std::exception
 
-void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &CommandMapping, std::map<int, std::wstring> &Exceptions,
+void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &CommandMapping,
              std::map<std::wstring, std::wstring>& Help, std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
 	std::wstringstream ostream;
 	std::wstringstream istream;
@@ -165,7 +165,7 @@ void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &C
 		istream << str << std::endl;
 	}
 
-	Dispatcher(ostream, istream, CommandMapping, Exceptions, Help, MatrixSet, Prompt);
+	Dispatcher(ostream, istream, CommandMapping, Help, MatrixSet, Prompt);
 }
 
 int main() {
@@ -206,20 +206,6 @@ int main() {
 			{L"", 			26}
 	};
 
-	std::map<int, std::wstring> Exceptions = {
-			 {0, L"DIVISION BY ZERO"},
-			 {1, L"NEGATIVE ARGUMENT"},
-			 {2, L"FILE NOT FOUND"},
-			 {3, L"ZERO LENGTH"},
-			 {4, L"DETERMINANT IS ZERO"},
-			 {5, L"MULTIPLICATION IMPOSSIBLE"},
-			 {6, L"MATRIX DOES NOT EXIST"},
-			 {7, L"SIZES DO NOT MATCH"},
-			 {8, L"INVALID ARGUMENT"},
-			 {9, L"NAME ALREADY EXISTS"},
-            {10, L"HELP STRING IS NOT FOUND"}
-	};
-
     std::map<std::wstring, std::wstring> Help = {
             {L"list", 		L" -- вывод списка матриц"},
             {L"print", 		L" номер_матрицы [точность_вывода = 4] -- красивый вывод в консоль"},
@@ -255,10 +241,10 @@ int main() {
 		}
 	}
 
-	StartUp(on_startup, CommandMapping, Exceptions, Help, MatrixSet, L"");
+	StartUp(on_startup, CommandMapping, Help, MatrixSet, L"");
 
 	int run_code = 0;
 	while (!run_code)
-		run_code = Dispatcher(ostream, istream, CommandMapping, Exceptions, Help, MatrixSet, L">>> ");
+		run_code = Dispatcher(ostream, istream, CommandMapping, Help, MatrixSet, L">>> ");
 }
 // mitrix-cli */
