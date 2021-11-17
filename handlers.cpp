@@ -11,27 +11,13 @@ class ExceptionWithMessage: std::exception {
 private:
 	std::wstring _error_msg;
 public:
-	ExceptionWithMessage (std::wstring error_msg) {
+	explicit ExceptionWithMessage (std::wstring error_msg) {
 		this->_error_msg = std::move(error_msg);
 	}
 
 	std::wstring get_error() {
 		return this->_error_msg;
 	}
-};
-
-enum ERRORS {
-	DIVISION_BY_ZERO = 0,
-	NEGATIVE_ARG = 1,
-	FILE_NOT_FOUND = 2,
-	ZERO_LENGTH = 3,
-	NO_DETERMINANT = 4,
-	MULTIPLICATION_IMPOSSIBLE = 5,
-	MATRIX_DOES_NOT_EXIST = 6,
-	SIZES_DO_NOT_MATCH = 7,
-	INVALID_ARGUMENT = 8,
-	NAME_ALREADY_EXISTS = 9,
-	HELP_STRING_IS_NOT_FOUND = 10
 };
 
 template <typename T> void Handlers::ListHandler(
@@ -173,13 +159,16 @@ template <typename T> void Handlers::DeterminantHandler(
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]); // Получение ссылки на матрицу
 	unsigned char precision = 4;
 	if (matrix.rows != matrix.columns) {	// TODO: проверь в отладчике, что копирует, а что передает ссылку auto или auto&
-		throw ExceptionWithMessage(L"Детерминант отсутствует.");	// Простая проверка
+		throw ExceptionWithMessage(L"Детерминант отсутствует, количество строк и рядов не совпадает.");	// Простая проверка
+	}
+	if (matrix.rows == 0 || matrix.columns == 0) {
+		throw ExceptionWithMessage(L"Один из размеров матрицы равен нулю.");
 	}
 	if (!Arguments[2].empty()) {
 		precision = std::stoul(Arguments[2]);
 	}
 	ostream << std::setprecision(precision);
-	ostream << "DETERMINANT IS " << matrix.DeterminantOf() << std::endl;
+	ostream << L"Детерминант равен " << matrix.DeterminantOf() << L"." << std::endl;
 }
 
 void Handlers::HelpHandler(std::vector<std::wstring>& Arguments,
@@ -320,7 +309,7 @@ template <typename T> void Handlers::MultiplicationByMatrixHandler(std::vector<M
 		throw ExceptionWithMessage(L"Размеры матриц не совпадают.");
 	}
 	if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
-		ExceptionWithMessage(L"Нулевые размеры одной из матрицы.");
+		throw ExceptionWithMessage(L"Нулевые размеры одной из матрицы.");
 	}
 	matrix1.MultiplicationByMatrix(matrix2);
  }

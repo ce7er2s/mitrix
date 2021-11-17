@@ -138,15 +138,19 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 26: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
-				ostream << L"WRONG COMMAND \"" << Command << "\"." << std::endl;
+				ostream << L"Ошибка: Команда \"" << Command << L"\" не найдена." << std::endl;
 			}
 		}
 	} catch (const std::invalid_argument &invalidArgument) { // Обработка исключения std::stoi
-		ostream << "WRONG ARGUMENT in command: \"" << to_parse << "\"." << std::endl;
+		ostream << L"Ошибка: Неверный аргумент в \"" << Arguments[0];
+		for (size_t i = 1; !Arguments[i].empty() && i < Arguments.size(); i++) {
+			ostream << " " << Arguments[i];
+		}
+		ostream << "\"." << std::endl;
 	} catch (const std::exception &unknownException) { // Обычно ловит ошибки std::bad_allocation
-		ostream << "UNKNOWN EXCEPTION: " << unknownException.what() << "." << std::endl;
-	} catch (ERRORS& errorCode) {
-		ostream << Exceptions[errorCode] << std::endl;  // Ошибки хендлеров
+		ostream << L"Неизвестное исключение: " << unknownException.what() << L"." << std::endl;
+	} catch (ExceptionWithMessage& error) {
+		ostream << L"Ошибка: " << error.get_error() << std::endl;  // Ошибки хендлеров
 	}
 	return 0;
 }
