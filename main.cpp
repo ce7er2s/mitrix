@@ -128,7 +128,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::CopyMatrixHandler(MatrixSet, Arguments);
 				break;
 			} case 23: {
-				Handlers::TransposeHandler(MatrixSet, Arguments);
+				// Handlers::TransposeHandler(MatrixSet, Arguments);
 				break;
 			} case 24: {
                 Handlers::HelpHandler(Arguments, Help, ostream);
