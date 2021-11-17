@@ -429,7 +429,7 @@ std::basic_ofstream<wchar_t> Handlers::OpenOFileHandler(std::wstring& path) {
 	std::filesystem::path filepath(path);
 	std::basic_ofstream<wchar_t> file (filepath);
 	if (!file.is_open()) {
-		throw ExceptionWithMessage(L"Не найден файл для записи.");
+		throw ExceptionWithMessage(L"Запись в данную директорию запрещена или файл занят.");
 	}
 	return file;
 }
