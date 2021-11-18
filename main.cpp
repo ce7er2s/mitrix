@@ -121,6 +121,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				break;
 			} case 20: {
 				Handlers::SubmatrixHandler<MATRIX_T>(MatrixSet, Arguments);
+				break;
 			} case 21: {
 				ostream << L"Не пали контору." << std::endl;
 				break;
