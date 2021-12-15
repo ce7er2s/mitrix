@@ -129,7 +129,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::CopyMatrixHandler(MatrixSet, Arguments);
 				break;
 			} case 23: {
-				// Handlers::TransposeHandler(MatrixSet, Arguments);
+				Handlers::TransposeHandler(MatrixSet, Arguments);
 				break;
 			} case 24: {
                 Handlers::HelpHandler(Arguments, Help, ostream);
@@ -155,7 +155,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 	}
 	return 0;
 }
-// TODO: сделать нормальную обработку ошибок через std::exception
+// TODO: сделать нормальную обработку ошибок через std::exception (Cделано)
 
 void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &CommandMapping,
              std::map<std::wstring, std::wstring>& Help, std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {

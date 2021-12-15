@@ -399,10 +399,10 @@ template <typename T> void Handlers::SubmatrixHandler(std::vector<Matrix<T>>& Ma
 	matrix1.name = name;
 }
 
-/* template <typename T> void Handlers::TransposeHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+template <typename T> void Handlers::TransposeHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	matrix.Transpose();
-} */
+}
 
 
 template <typename T> void Handlers::CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
