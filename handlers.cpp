@@ -22,19 +22,19 @@ public:
 
 template <typename T> void Handlers::ListHandler(
 		std::vector<Matrix<T>>& MatrixSet,  std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
-	ostream << std::endl << " ";
+	ostream << L"\n" << " ";
 	ostream << std::setw(2) << L"#" << "|";  // Отрисовка шапки
 	ostream << std::setw(5) << L"ROWS" << "|";
 	ostream << std::setw(8) << L"COLUMNS" << "|";
 	ostream << std::setw(14) << L"STORAGE" << "|";
-	ostream << std::setw(5) << L"NAME" << std::endl <<  " ";
+	ostream << std::setw(5) << L"NAME" << L"\n" <<  " ";
 	ostream.width(28);
 	ostream.fill('-');	// Отрисовка разделителя
 	ostream << std::setw(2) << "" << "+";
 	ostream << std::setw(5) << "" << "+";
 	ostream << std::setw(8) << "" << "+";
 	ostream << std::setw(14) << "" << "+";
-	ostream << std::setw(16) << "" << std::endl;
+	ostream << std::setw(16) << "" << L"\n";
 	ostream.fill(' ');
 	uint32_t i = 1;
 	for (Matrix<T>& matrix: MatrixSet) { // Отрисовка инфы о каждой матрицы
@@ -45,13 +45,13 @@ template <typename T> void Handlers::ListHandler(
 		ostream << std::setw(8) << sizeof(T) * matrix.rows * matrix.columns << std::setw(6) << L"bytes" << "|";
 		ostream << " ";
 		if (!matrix.name.empty()) {
-			ostream << matrix.name << std::endl;
+			ostream << matrix.name << L"\n";
 		}
 		else {
-			ostream << L"NONE" << std::endl;
+			ostream << L"NONE" << L"\n";
 		}
 	}
-	ostream << std::endl;
+	ostream << L"\n";
 }
 
 template <typename T> void Handlers::InputHandler(
@@ -78,12 +78,12 @@ template <typename T> void Handlers::InputHandler(
 template <typename T> void Handlers::OutputHandler(
 		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
-	ostream << matrix.rows << " " << matrix.columns << std::endl;
+	ostream << matrix.rows << " " << matrix.columns << L"\n";
 	for (uint32_t i = 0; i < matrix.rows; i++) {
 		for (uint32_t j = 0; j < matrix.columns - 1; j++) {
 			ostream << matrix[i][j] << " ";
 		}
-		ostream << matrix[i][matrix.columns-1] << std::endl;
+		ostream << matrix[i][matrix.columns-1] << L"\n";
 	}
 }
 
@@ -125,13 +125,13 @@ template <typename T> void Handlers::FormatOutputHandler(
 	auto rows_size = static_cast<unsigned char>(columns_max_size) + 1;
 	// +1 для отступа.
 	ostream << std::fixed << std::setprecision(precision);
-	ostream << std::endl << " ";
+	ostream << L"\n" << " ";
 
 	ostream << std::setw(rows_size) << "";
 	for (uint32_t i = 0; i < matrix.columns; i++) {  // Отрисовка шапки с индексами: 1| 2| 3|
 		ostream << " |" << std::setw(cell_size) << i+1;
 	}
-	ostream << std::endl;
+	ostream << L"\n";
 
 	for (uint32_t i = 0; i < matrix.rows; i++) {  // Отрисовка полоски и рядов. Одна итерация -- полоска и ряд элементов
 		ostream << " ";
@@ -141,7 +141,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 			ostream << '+' << std::setw(cell_size+1) << "";
 		ostream << "+" << std::setw(cell_size) << "";
 		ostream.fill(' ');
-		ostream << std::endl;
+		ostream << L"\n";
 
 		ostream << " ";
 		ostream << std::setw(rows_size) << i+1 << " |";  // Отрисовка элементов
@@ -149,9 +149,9 @@ template <typename T> void Handlers::FormatOutputHandler(
 		for (uint32_t j = 1; j < matrix.columns; j++) {
 			ostream << " |" << std::setw(cell_size) << matrix._storage[i][j];
 		}
-		ostream << std::endl;
+		ostream << L"\n";
 	}
-	ostream << std::endl;
+	ostream << L"\n";
 }
 
 template <typename T> void Handlers::DeterminantHandler(
@@ -168,7 +168,7 @@ template <typename T> void Handlers::DeterminantHandler(
 		precision = std::stoul(Arguments[2]);
 	}
 	ostream << std::setprecision(precision);
-	ostream << L"Детерминант равен " << matrix.DeterminantOf() << L"." << std::endl;
+	ostream << L"Детерминант равен " << matrix.DeterminantOf() << L"." << L"\n";
 }
 
 void Handlers::HelpHandler(std::vector<std::wstring>& Arguments,
@@ -179,13 +179,13 @@ void Handlers::HelpHandler(std::vector<std::wstring>& Arguments,
             letter = std::tolower(letter);
         }
         if (Help.contains(lower_arg1)) {
-            ostream << lower_arg1 << Help[lower_arg1] << std::endl;
+            ostream << lower_arg1 << Help[lower_arg1] << L"\n";
         } else {
 			throw ExceptionWithMessage(L"Справочная информация не найдена.");
         }
     } else {
         for (const auto& command: Help) {
-            ostream << command.first << command.second << std::endl;
+            ostream << command.first << command.second << L"\n";
         }
     }
 }

@@ -123,7 +123,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::SubmatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 21: {
-				ostream << L"Не пали контору." << std::endl;
+				ostream << L"Не пали контору." << L"\n";
 				break;
 			} case 22: {
 				Handlers::CopyMatrixHandler(MatrixSet, Arguments);
@@ -139,7 +139,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 26: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
-				ostream << L"Ошибка: Команда \"" << Command << L"\" не найдена." << std::endl;
+				ostream << L"Ошибка: Команда \"" << Command << L"\" не найдена." << L"\n";
 			}
 		}
 	} catch (const std::invalid_argument &invalidArgument) { // Обработка исключения std::stoi
@@ -147,11 +147,13 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 		for (size_t i = 1; !Arguments[i].empty() && i < Arguments.size(); i++) {
 			ostream << " " << Arguments[i];
 		}
-		ostream << "\"." << std::endl;
+		ostream << "\"." << L"\n";
 	} catch (const std::exception &unknownException) { // Обычно ловит ошибки std::bad_allocation
-		ostream << L"Неизвестное исключение: " << unknownException.what() << L"." << std::endl;
+		ostream << L"Неизвестное исключение: " << unknownException.what() << L"." << L"\n";
 	} catch (ExceptionWithMessage& error) {
-		ostream << L"Ошибка: " << error.get_error() << std::endl;  // Ошибки хендлеров
+		ostream << L"Ошибка: " << error.get_error() << L"\n";  // Ошибки хендлеров
+	} catch (...) {
+		ostream << L"Непойманное исключение." << L"\n";
 	}
 	return 0;
 }
@@ -163,7 +165,7 @@ void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &C
 	std::wstringstream istream;
 
 	for (std::wstring& str: Settings) {
-		istream << str << std::endl;
+		istream << str << L"\n";
 	}
 
 	Dispatcher(ostream, istream, CommandMapping, Help, MatrixSet, Prompt);
@@ -234,11 +236,11 @@ int main() {
 
 	time_t timestamp = std::time(nullptr);
 	ostream << "Mitrix v1.0 at " << std::ctime(&timestamp);
-	ostream << "Matrices count: " << MatrixSet.size() << std::endl;
+	ostream << "Matrices count: " << MatrixSet.size() << L"\n";
 	if (!on_startup.empty()) {
-		ostream << "On StartUp: " << on_startup[0] << std::endl;
+		ostream << "On StartUp: " << on_startup[0] << L"\n";
 		for (size_t i = 1; i < on_startup.size(); i++) {
-			ostream << std::setw(12) << "" << on_startup[i] << std::endl;
+			ostream << std::setw(12) << "" << on_startup[i] << L"\n";
 		}
 	}
 
