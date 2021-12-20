@@ -80,7 +80,7 @@ namespace Handlers {
 
 	std::basic_ofstream<wchar_t> OpenOFileHandler(std::wstring& path);
 
-
+	template <typename T> void LUTransformHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 }
 
 #include "handlers.cpp"

@@ -7,6 +7,7 @@
 // Created by reenie on 27.09.2021.
 //
 
+
 class ExceptionWithMessage: std::exception {
 private:
 	std::wstring _error_msg;
@@ -434,4 +435,15 @@ std::basic_ofstream<wchar_t> Handlers::OpenOFileHandler(std::wstring& path) {
 	return file;
 }
 
-
+template <typename T> void Handlers::LUTransformHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& matrix = GetMatrixHandler(MatrixSet, Arguments[1]);
+	if (matrix.rows != matrix.columns) {
+		throw ExceptionWithMessage(L"Матрица не квадратная.");
+	} else if (matrix.rows == 0 || matrix.columns == 0) {
+		throw ExceptionWithMessage(L"Нулевые размеры матрицы.");
+	} else {
+		auto temp = matrix.lu_transform();
+		GetMatrixHandler(MatrixSet, Arguments[2]) = *(temp[1]);
+		GetMatrixHandler(MatrixSet, Arguments[3]) = *(temp[2]);
+	}
+}

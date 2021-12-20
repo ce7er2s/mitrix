@@ -1,7 +1,3 @@
-//
-// Created by reenie on 29.09.2021.
-//
-
 #ifndef MITRIX_H
 #define MITRIX_H
 
@@ -16,10 +12,12 @@ public:
 	std::vector<T>& operator[] (int32_t n);
 
 	~Matrix();
-
-	explicit Matrix (Matrix<T> _matrix_1, Matrix<T> _matrix_2);
+	Matrix (Matrix<T>& matrix);
+	Matrix (Matrix<T> _matrix_1, Matrix<T> _matrix_2);
 	explicit Matrix(uint32_t _rows = 0, uint32_t _columns = 0, std::vector<std::vector<T>>* _storage = nullptr);
+
 	Matrix<T> SubmatrixOf (uint32_t _row, uint32_t _column);
+	Matrix<T> GetRow(uint32_t i);
 
 	void ResizeTo(uint32_t _rows, uint32_t _columns);
 	void FillStorage(unsigned char mode = 'r', T value = 0, T left_border = 0, T right_border = 0);
@@ -35,11 +33,14 @@ public:
 	void SubtractionByScalar(T _value);
 	void DivisionByScalar(T _value);
 
+	std::vector<Matrix<T>*> lu_transform();
+
 	void Transpose();
 
 	T DeterminantOf();
 };
 
-#include "service.hpp"
 
-#endif // MITRIX_H
+#endif // MITRIX_H]
+
+#include "service.hpp"

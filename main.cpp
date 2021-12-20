@@ -134,9 +134,12 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 24: {
                 Handlers::HelpHandler(Arguments, Help, ostream);
                 break;
-			} case 25: { // Выход
+			} case 25: {
+				Handlers::LUTransformHandler(MatrixSet, Arguments);
+				break;
+			} case 26: { // Выход
 				return -1;
-			} case 26: { // Пустая строка
+			} case 27: { // Пустая строка
 				break;
 			} default: { // Команда не найдена
 				ostream << L"Ошибка: Команда \"" << Command << L"\" не найдена." << L"\n";
@@ -157,7 +160,6 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 	}
 	return 0;
 }
-// TODO: сделать нормальную обработку ошибок через std::exception (Cделано)
 
 void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &CommandMapping,
              std::map<std::wstring, std::wstring>& Help, std::vector<Matrix<MATRIX_T>> &MatrixSet, const std::wstring& Prompt) {
@@ -172,7 +174,7 @@ void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &C
 }
 
 int main() {
-	std::vector<std::wstring> on_startup = {L"execute /home/reenie/startup.msh"};
+	std::vector<std::wstring> on_startup = {L"execute /home/reenie/startup.msh", L"это не команда, но справка по команде help"};
 	setlocale(LC_CTYPE, "");
 
 	std::vector<Matrix<MATRIX_T>> MatrixSet(10);
@@ -205,8 +207,9 @@ int main() {
 			{L"copy",	   		22},
 			{L"transpose",	23},
 			{L"help",	   		24},
-			{L"exit", 		25},
-			{L"", 			26}
+			{L"transform", 		25},
+			{L"exit", 		26},
+			{L"", 			27}
 	};
 
     std::map<std::wstring, std::wstring> Help = {
@@ -249,5 +252,6 @@ int main() {
 	int run_code = 0;
 	while (!run_code)
 		run_code = Dispatcher(ostream, istream, CommandMapping, Help, MatrixSet, L">>> ");
+	return 0;
 }
 // mitrix-cli */
