@@ -3,6 +3,7 @@
 //
 
 
+
 template <typename T> std::vector<T>& Matrix<T>::operator[] (int32_t n) {
 	return this->_storage[n];	// TODO: Реализация доступа к приватному _storage по отрицательному индексу aka Python-style
 }
@@ -217,15 +218,21 @@ template <typename T> void Matrix<T>::Transpose() {
 }
 
 template <typename T> std::vector<Matrix<T>*> Matrix<T>::lu_transform() {
-	auto* L_matrix = new Matrix<T>(this->rows, this->columns);
-	auto* U_matrix = new Matrix<T>(*this);
+	auto L_matrix = new Matrix<T>(this->rows, this->columns);
+	auto U_matrix = new Matrix<T>(*this);
 	for (size_t j = 0; j < L_matrix->columns; j++) {
-		auto JRow = U_matrix->GetRow(j);
+		//auto JRow = U_matrix->GetRow(j);
 		for (size_t i = j; i < L_matrix->rows; i++) {
 			L_matrix->_storage[i][j] = U_matrix->_storage[j][j] / U_matrix->_storage[i][j];
-			auto IRow = U_matrix->GetRow(i);
-			IRow.MultiplicationByScalar(L_matrix->_storage[i][j]);
-			JRow.SubtractionByMatrix(IRow);
+			//auto IRow = U_matrix->GetRow(i);
+			for (size_t k = 0; k < L_matrix->columns; k++) {
+				L_matrix->_storage[j][k] *= L_matrix->_storage[i][j];
+			}
+			//IRow.MultiplicationByScalar(L_matrix->_storage[i][j]);
+			//JRow.SubtractionByMatrix(IRow);
+			for (size_t k = 0; k < U_matrix->columns; k++) {
+				U_matrix->_storage[j][k] -= U_matrix->_storage[i][k];
+			}
 		}
 	}
 	std::vector<Matrix<T>*> temp;
@@ -234,12 +241,24 @@ template <typename T> std::vector<Matrix<T>*> Matrix<T>::lu_transform() {
 	return temp;
 }
 
-template<typename T> Matrix<T>::Matrix(Matrix<T>& matrix):
-	rows(matrix.rows), columns(matrix.columns), _storage(matrix._storage) {
+template<typename T> Matrix<T>::Matrix(Matrix<T>& matrix): rows(matrix.rows), columns(matrix.columns) {
+	this->_storage = std::vector<std::vector<T>>(this->rows); // иницализация масссива _storage
+	for (size_t i = 0; i < this->rows; i++) {
+		this->_storage[i].resize(this->columns);
+	}
+	for (size_t i = 0; i < this->rows; i++) {
+		for (size_t j = 0; j < this->columns; j++) {
+			this->_storage[i][j] = matrix._storage[i][j];
+		}
+	}
 }
 
-template<typename T>
-Matrix<T> Matrix<T>::GetRow(uint32_t i) {
-	std::vector<std::vector<T>> temp = {this->_storage[i]};
-	return Matrix<T>(1, this->columns, &temp);
+template <typename T> Matrix<T>& Matrix<T>::operator=(Matrix<T>&& matrix) { // TODO: сделать нормальные конструкторы и работу с памятью
+	if (this != &matrix) {
+		this->rows = matrix.rows;
+		this->columns = matrix.columns;
+		this->_storage.swap(matrix._storage);
+		this->name = matrix.name;
+	}
+	return *this;
 }

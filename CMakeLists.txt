@@ -4,3 +4,4 @@ project(untitled)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(mitrix-cli main.cpp service.h handlers.h)
+add_executable(checkout checkout.cpp)

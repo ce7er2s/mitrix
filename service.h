@@ -10,14 +10,15 @@ public:
 	std::wstring name;
 public:
 	std::vector<T>& operator[] (int32_t n);
+	Matrix<T>& operator=(Matrix<T>&& matrix);
 
 	~Matrix();
 	Matrix (Matrix<T>& matrix);
+
 	Matrix (Matrix<T> _matrix_1, Matrix<T> _matrix_2);
 	explicit Matrix(uint32_t _rows = 0, uint32_t _columns = 0, std::vector<std::vector<T>>* _storage = nullptr);
 
 	Matrix<T> SubmatrixOf (uint32_t _row, uint32_t _column);
-	Matrix<T> GetRow(uint32_t i);
 
 	void ResizeTo(uint32_t _rows, uint32_t _columns);
 	void FillStorage(unsigned char mode = 'r', T value = 0, T left_border = 0, T right_border = 0);

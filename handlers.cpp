@@ -443,7 +443,7 @@ template <typename T> void Handlers::LUTransformHandler(std::vector<Matrix<T>>& 
 		throw ExceptionWithMessage(L"Нулевые размеры матрицы.");
 	} else {
 		auto temp = matrix.lu_transform();
-		GetMatrixHandler(MatrixSet, Arguments[2]) = *(temp[1]);
-		GetMatrixHandler(MatrixSet, Arguments[3]) = *(temp[2]);
+		GetMatrixHandler(MatrixSet, Arguments[2]) = std::move(*temp[0]);
+		GetMatrixHandler(MatrixSet, Arguments[3]) = std::move(*temp[1]);
 	}
 }
