@@ -69,10 +69,9 @@ public:
 			storage.swap(matrix._storage);
 			// name = matrix.name;
 		}
-		return *this;
 	}
 
-	Matrix<T>& SubmatrixOf (uint32_t _row, uint32_t _column) {
+	Matrix<T> SubmatrixOf (uint32_t _row, uint32_t _column) {
 		auto* temp = new std::vector<std::vector<T>>; // создание минора по индексам
 		for (size_t i = 0; i < rows; i++) {
 			if (i != _row) {
@@ -133,7 +132,7 @@ public:
 		}
 	}
 
-	void MultiplyWith(Matrix<T>& matrix) { // умножение матрицы
+	void MultiplyWith(const Matrix<T>& matrix) { // умножение матрицы
 		std::vector<std::vector<T>> temp;
 		uint32_t size = matrix.rows;
 		uint32_t temp_rows = this->rows;
@@ -229,16 +228,18 @@ public:
 		}
 	};
 
-	std::vector<Matrix<T>*> lu_transform() {};
+	std::vector<Matrix<T>*> lu_transform() {
+		return std::vector<Matrix<T>*>(2);
+	};
 
 	void Transpose() {
-		std::vector<std::vector<T>>new_matrix_data(this->columns); // временная переменная
+		std::vector<std::vector<T>>new_matrix_data(columns); // временная переменная
 		for (std::vector<T>& row: new_matrix_data) {
-			row.resize(this->rows); // меняем размеры на обратные
+			row.resize(rows); // меняем размеры на обратные
 		}
-		for (size_t i = 0; i < this->columns; i++) {
-			for (size_t j = 0; j < this->rows; j++) {
-				new_matrix_data[i][j] = this->_storage[j][i];
+		for (size_t i = 0; i < columns; i++) {
+			for (size_t j = 0; j < rows; j++) {
+				new_matrix_data[i][j] = storage[j][i];
 			}
 		}
 		storage.swap(new_matrix_data);

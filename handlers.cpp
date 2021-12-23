@@ -71,7 +71,7 @@ template <typename T> void Handlers::InputHandler(
 	matrix.ResizeTo(rows, columns); // Переразметка матрицы
 	for (uint32_t i = 0; i < rows; i++) {
 		for (uint32_t j = 0; j < columns; j++) {
-			istream >> matrix._storage[i][j]; // Заполнение
+			istream >> matrix.storage[i][j]; // Заполнение
 		}
 	}
 }
@@ -107,12 +107,12 @@ template <typename T> void Handlers::FormatOutputHandler(
 	}
 
 	size_t element_max_size = 0;  // Для правильной конвертации таблицы нужны размеры точные
-	size_t row_max_size = std::to_string(matrix._storage.size()).length();
-	size_t columns_max_size = std::to_string(matrix._storage[0].size()).length();
+	size_t row_max_size = std::to_string(matrix.storage.size()).length();
+	size_t columns_max_size = std::to_string(matrix.storage[0].size()).length();
 	std::basic_stringstream<wchar_t> printer;
 	printer << std::setprecision(precision) << std::fixed;
 
-	for (std::vector<T> row: matrix._storage) {  // Поиск максимально длинного элемента
+	for (std::vector<T> row: matrix.storage) {  // Поиск максимально длинного элемента
 		for (T element: row) {
 			printer << element;
 			element_max_size = std::max(element_max_size, printer.str().length());
@@ -148,7 +148,7 @@ template <typename T> void Handlers::FormatOutputHandler(
 		ostream << std::setw(rows_size) << i+1 << " |";  // Отрисовка элементов
 		ostream << std::setw(cell_size) << matrix[i][0];
 		for (uint32_t j = 1; j < matrix.columns; j++) {
-			ostream << " |" << std::setw(cell_size) << matrix._storage[i][j];
+			ostream << " |" << std::setw(cell_size) << matrix.storage[i][j];
 		}
 		ostream << L"\n";
 	}
@@ -407,13 +407,9 @@ template <typename T> void Handlers::TransposeHandler(std::vector<Matrix<T>>& Ma
 
 
 template <typename T> void Handlers::CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
-	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
-	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
-	auto* new_storage = new std::vector<std::vector<T>>;
-	auto name = matrix1.name;
-	std::copy(matrix2._storage.begin(), matrix2._storage.end(), std::back_inserter(*new_storage));
-	matrix1 = Matrix<T>(matrix2.rows, matrix2.columns, new_storage);
-	matrix1.name = name;
+	Matrix<T>& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	Matrix<T>& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	matrix2 = matrix1;
 }
 
 
