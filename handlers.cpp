@@ -270,9 +270,9 @@ template <typename T> void Handlers::ResizeMatrixHandler(
 	auto& matrix = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	uint32_t rows = std::stoul(Arguments[2]);
 	uint32_t columns = std::stoul(Arguments[3]);
-	if (rows == 0 || columns == 0) {
+	/*if (rows == 0 || columns == 0) {
 		throw ExceptionWithMessage(L"Нулевые размеры матрицы.");
-	}
+	}*/
 	matrix.ResizeTo(rows, columns);
 }
 

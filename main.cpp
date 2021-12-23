@@ -247,7 +247,7 @@ int main() {
 		}
 	}
 
-	//StartUp(on_startup, CommandMapping, Help, MatrixSet, L"");
+	StartUp(on_startup, CommandMapping, Help, MatrixSet, L"");
 
 	int run_code = 0;
 	while (!run_code)

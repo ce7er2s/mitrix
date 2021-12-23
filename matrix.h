@@ -88,13 +88,13 @@ public:
 
 	void ResizeTo(uint32_t _rows, uint32_t _columns) {
 		rows = _rows;
-		columns = _columns;
+		columns = _columns;   // <
+		storage.resize(rows); // Эти две строчки были под циклом. Все падало. Я поставил их сюда и теперь всё работает. WTF
+		storage.shrink_to_fit();
 		for (size_t i = 0; i < rows; i++) {
 			storage[i].resize(columns);
 			storage[i].shrink_to_fit();
 		}
-		storage.resize(rows);
-		storage.shrink_to_fit();
 	};
 
 	void FillStorage(unsigned char mode = 'r', T value = 0, T left_border = 0, T right_border = 0) {
