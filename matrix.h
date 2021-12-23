@@ -135,7 +135,7 @@ public:
 	void MultiplyWith(const Matrix<T>& matrix) { // умножение матрицы
 		std::vector<std::vector<T>> temp;
 		uint32_t size = matrix.rows;
-		uint32_t temp_rows = this->rows;
+		uint32_t temp_rows = rows;
 		uint32_t temp_columns = matrix.columns;
 		temp.resize(temp_rows);
 		for (uint32_t i = 0; i < size; i++)
