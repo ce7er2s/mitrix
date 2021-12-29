@@ -395,6 +395,9 @@ template <typename T> void Handlers::SubmatrixHandler(std::vector<Matrix<T>>& Ma
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	uint32_t row = std::stoul(Arguments[3]);
 	uint32_t column = std::stoul(Arguments[4]);
+	if (matrix1.rows <= row || matrix1.columns <= column) {
+		throw ExceptionWithMessage(L"Выход за пределы матрицы.");
+	}
 	auto name = matrix1.name;
 	matrix1 = matrix2.SubmatrixOf(row, column);
 	matrix1.name = name;
@@ -405,6 +408,70 @@ template <typename T> void Handlers::TransposeHandler(std::vector<Matrix<T>>& Ma
 	matrix.Transpose();
 }
 
+template <typename T> void Handlers::ABXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& A = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& B = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	auto& X = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
+	if (A.rows < A.columns) {
+		throw ExceptionWithMessage(L"СЛАУ имеет множество решений.");
+	}
+	if (B.rows < A.columns) {
+		throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
+	}
+	try {
+		X = gauss_method<T>(A, B);
+	} catch (const wchar_t* error) {
+		throw ExceptionWithMessage(error);
+	}
+}
+
+template <typename T> void Handlers::ALUHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& A = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& L = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	auto& U = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
+	if (A.rows != A.columns) {
+		throw ExceptionWithMessage(L"Матрица для разложения должна быть квадратной");
+	}
+	if (A.rows == 0 || A.columns == 0) {
+		throw ExceptionWithMessage(L"Матрица имеет нулевые размеры.");
+	}
+	try {
+		auto LU = lu_transform<T>(A);
+		L = LU[0];
+		U = LU[1];
+	} catch (const wchar_t* error) {
+		throw ExceptionWithMessage(error);
+	};
+}
+
+template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+	auto& L = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+	auto& U = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+	auto& B = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
+	auto& X = Handlers::GetMatrixHandler(MatrixSet, Arguments[4]);
+	if (L.rows != U.columns) {
+		throw ExceptionWithMessage(L"Матрица для разложения должна быть квадратной");
+	}
+	if (L.rows == 0 || U.rows == 0 || B.rows == 0 || L.columns == 0 || U.columns == 0 || B.columns == 0) {
+		throw ExceptionWithMessage(L"Матрица имеет нулевые размеры.");
+	}
+	if (L.rows != U.rows || L.columns != U.columns) {
+		throw ExceptionWithMessage(L"Матрица имеет нулевые размеры.");
+	}
+
+	auto Y = Matrix<T>(B);
+	if (L.rows < L.columns || U.rows < U.columns) {
+		throw ExceptionWithMessage(L"СЛАУ имеет множество решений.");
+	}
+	if (B.rows < L.columns) {
+		throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
+	}
+	try {
+		X = lubx_method<T>(L, U, B);
+	} catch (const wchar_t* error) {
+		throw ExceptionWithMessage(error);
+	}
+}
 
 template <typename T> void Handlers::CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
 	Matrix<T>& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
@@ -429,17 +496,4 @@ std::basic_ofstream<wchar_t> Handlers::OpenOFileHandler(std::wstring& path) {
 		throw ExceptionWithMessage(L"Запись в данную директорию запрещена или файл занят.");
 	}
 	return file;
-}
-
-template <typename T> void Handlers::LUTransformHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
-	auto& matrix = GetMatrixHandler(MatrixSet, Arguments[1]);
-	if (matrix.rows != matrix.columns) {
-		throw ExceptionWithMessage(L"Матрица не квадратная.");
-	} else if (matrix.rows == 0 || matrix.columns == 0) {
-		throw ExceptionWithMessage(L"Нулевые размеры матрицы.");
-	} else {
-		auto temp = matrix.lu_transform();
-		GetMatrixHandler(MatrixSet, Arguments[2]) = std::move(*temp[0]);
-		GetMatrixHandler(MatrixSet, Arguments[3]) = std::move(*temp[1]);
-	}
 }

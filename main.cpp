@@ -135,11 +135,20 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
                 Handlers::HelpHandler(Arguments, Help, ostream);
                 break;
 			} case 25: {
-				Handlers::LUTransformHandler(MatrixSet, Arguments);
+				ostream << L"тут ничего нет, лол. см. \"alu\"";
 				break;
 			} case 26: { // Выход
 				return -1;
 			} case 27: { // Пустая строка
+				break;
+			} case 28: {
+				Handlers::ABXHandler(MatrixSet, Arguments);
+				break;
+			} case 29: {
+				Handlers::ALUHandler(MatrixSet, Arguments);
+				break;
+			} case 30: {
+				Handlers::LUBXHandler(MatrixSet, Arguments);
 				break;
 			} default: { // Команда не найдена
 				ostream << L"Ошибка: Команда \"" << Command << L"\" не найдена." << L"\n";
@@ -155,6 +164,10 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 		ostream << L"Неизвестное исключение: " << unknownException.what() << L"." << L"\n";
 	} catch (ExceptionWithMessage& error) {
 		ostream << L"Ошибка: " << error.get_error() << L"\n";  // Ошибки хендлеров
+	} catch (const char* error) {
+		ostream << error << L"\n";
+	} catch (const wchar_t* error) {
+		ostream << error << L"\n";
 	} catch (...) {
 		ostream << L"Непойманное исключение." << L"\n";
 	}
@@ -211,7 +224,8 @@ int main() {
 			{L"exit", 		26},
 			{L"", 			27},
 			{L"abx", 			28},
-			{L"alu", 			29}
+			{L"alu", 			29},
+			{L"lubx", 			30}
 	};
 
     std::map<std::wstring, std::wstring> Help = {
