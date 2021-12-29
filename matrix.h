@@ -229,7 +229,7 @@ public:
 	};
 
 	std::vector<Matrix<T>*> lu_transform() {
-		return std::vector<Matrix<T>*>(2);
+		Matrix<T>* L_matrix = new Matrix<T>();
 	};
 
 	void Transpose() {
@@ -269,6 +269,42 @@ public:
 		}
 	};
 };
+
+template <typename T> std::vector<Matrix<T>> gauss_method(Matrix<T>& A_matrix, Matrix<T>& B_matrix) {
+	auto tempA = Matrix<T>(A_matrix);
+	auto tempB = Matrix<T>(B_matrix);
+	auto tempX = Matrix<T>(B_matrix);
+
+	for (size_t j = 0; j < tempA.rows-1; j++) { // перебор от нулевого столбца до предпоследнего
+		for (size_t i = 1; i <= tempA.rows - 1; i++) { // перебор с первой строчки до последней
+			if (i > j) {
+				T weight = tempA.storage[i][j] / tempA.storage[j][j]; // коэффициент для i-той строки
+				for (size_t k = 0; k < tempA.columns; k++) {
+					tempA.storage[i][k] -= weight * tempA.storage[j][k]; // вычитание j-той строки, умноженной на коэффициент, из i-той
+				}
+				tempB.storage[i][0] -= weight * tempB.storage[j][0];
+			}
+		}
+	}
+	// std::cout << "\n" << A_matrix.DeterminantOf() << " " <<  tempA.DeterminantOf() << "\n\n";
+	for (size_t i = A_matrix.rows-1; i != 0; i--) { // i и Matrix::rows это uint32_t. Они не могут быть меньше нуля
+		T x = tempB.storage[i][0] / tempA.storage[i][i]; // находим нижний X
+		for (size_t j = 0; j < tempA.rows-1; j++) {
+			tempB.storage[j][0] -= x * tempA.storage[j][i]; // вычитаем разницу из свободного члена
+			tempA.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
+		}
+		tempX.storage[i][0] = x; // записываем X
+	}
+	tempX.storage[0][0] = tempB.storage[0][0] / tempA.storage[0][0]; // поэтому тут случай для нуля
+
+	return {tempA, tempB, tempX};
+}
+
+template <typename T> std::vector<Matrix<T>> lu_transform(Matrix<T>& A_matrix) {
+	auto tempL = Matrix<T>(A_matrix.rows, A_matrix.columns);
+	auto tempU = Matrix<T>(A_matrix.rows, A_matrix.columns);
+
+}
 
 
 #endif // MITRIX_H]
