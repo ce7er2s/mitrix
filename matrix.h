@@ -332,9 +332,13 @@ template <typename T> std::vector<Matrix<T>> lu_transform(Matrix<T>& A_matrix) {
 template <typename T> Matrix<T> lubx_method(Matrix<T> L_matrix, Matrix<T> U_matrix, Matrix<T> B_matrix) {
 	auto tempX = Matrix<T>(B_matrix);
 	auto tempY = Matrix<T>(B_matrix);
+	T x;
 	// прямая подстановка для LY = B
 	for (size_t i = 0; i < L_matrix.rows; i++) { // i и Matrix::rows это uint32_t. Они не могут быть меньше нуля
-		T x = L_matrix.storage[i][i]; // находим нижний X
+		if (B_matrix.storage[i][0] == 0) {
+			throw L"Деление на ноль.";
+		}
+		x = B_matrix.storage[i][0] / L_matrix.storage[i][i]; // находим нижний X
 		for (size_t j = 1; j < L_matrix.rows; j++) {
 			B_matrix.storage[j][0] -= x * L_matrix.storage[j][i]; // вычитаем разницу из свободного члена
 			L_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
@@ -347,7 +351,7 @@ template <typename T> Matrix<T> lubx_method(Matrix<T> L_matrix, Matrix<T> U_matr
 		if (U_matrix.storage[i][i] == 0) {
 			throw L"Деление на ноль.";
 		}
-		T x = tempY.storage[i][0] / U_matrix.storage[i][i]; // находим нижний X
+		x = tempY.storage[i][0] / U_matrix.storage[i][i]; // находим нижний X
 		for (size_t j = 0; j < U_matrix.rows-1; j++) {
 			tempY.storage[j][0] -= x * U_matrix.storage[j][i]; // вычитаем разницу из свободного члена
 			U_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
