@@ -293,14 +293,14 @@ template <typename T> void Handlers::MatrixMultiplicationHandler(
 	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto& matrix3 = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
-	if (matrix2.columns != matrix3.rows) {
+	if (matrix1.columns != matrix2.rows) {
 		throw ExceptionWithMessage(L"Размеры матриц не позволяют их умножить.");
-	} else if (matrix2.rows == 0 || matrix2.columns == 0 || matrix3.rows == 0 || matrix3.columns == 0) {
+	} else if (matrix2.rows == 0 || matrix2.columns == 0 || matrix1.rows == 0 || matrix1.columns == 0) {
 		throw ExceptionWithMessage(L"Нулевые размеры одной из матриц.");
 	}
-	auto name = matrix1.name;
-	matrix1 = Matrix<T>(matrix2, matrix3);
-	matrix1.name = name;
+	auto name = matrix3.name;
+	matrix3 = Matrix<T>(matrix1, matrix2);
+	matrix3.name = name;
 }
 
 template <typename T> void Handlers::MultiplicationByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
