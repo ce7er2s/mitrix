@@ -228,10 +228,6 @@ public:
 		}
 	};
 
-	std::vector<Matrix<T>*> lu_transform() {
-		Matrix<T>* L_matrix = new Matrix<T>();
-	};
-
 	void Transpose() {
 		std::vector<std::vector<T>>new_matrix_data(columns); // временная переменная
 		for (std::vector<T>& row: new_matrix_data) {
@@ -303,7 +299,27 @@ template <typename T> std::vector<Matrix<T>> gauss_method(Matrix<T>& A_matrix, M
 template <typename T> std::vector<Matrix<T>> lu_transform(Matrix<T>& A_matrix) {
 	auto tempL = Matrix<T>(A_matrix.rows, A_matrix.columns);
 	auto tempU = Matrix<T>(A_matrix.rows, A_matrix.columns);
+	for (size_t i = 0; i < A_matrix.rows; i++) {
+		tempL.storage[i][i] = 1;
+		//tempU.storage[i][i] = A_matrix.storage[i][i];
+	}
 
+	T summary;
+	for (int64_t i = 0; i < A_matrix.rows; i++) {
+		for (size_t j = 0; j < A_matrix.columns; j++) {
+
+			summary = 0;
+			for (int64_t k = 0; k <= i-1; k++) {
+				summary += tempL.storage[i][k] * tempU.storage[k][j]; // сумма какая-то (произведение двух столбцов L и U
+			}
+			if (i > j) { // заполнение L матрицы
+				tempL.storage[i][j] = (A_matrix.storage[i][j] - summary) / tempU.storage[j][j];
+			} else { // заполнение U матрицы
+				tempU.storage[i][j] = A_matrix.storage[i][j] - summary;
+			}
+		}
+	}
+	return {tempL, tempU};
 }
 
 

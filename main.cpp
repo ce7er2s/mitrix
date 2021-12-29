@@ -209,7 +209,9 @@ int main() {
 			{L"help",	   		24},
 			{L"transform", 		25},
 			{L"exit", 		26},
-			{L"", 			27}
+			{L"", 			27},
+			{L"abx", 			28},
+			{L"alu", 			29}
 	};
 
     std::map<std::wstring, std::wstring> Help = {

@@ -20,16 +20,16 @@ int main () {
 	Matrix<double> B(storage2);
 
 	auto solution = gauss_method<double>(A, B);
-	for (auto& row: solution[0]->storage) {
+	for (auto& row: solution[0].storage) {
 		for (auto& element: row) {
 			std::cout << element << " ";
 		}
 		std::cout << "\n";
 	}
 
-	std::cout << "\n" << solution[0]->DeterminantOf() << "\n\n";
+	std::cout << "\n" << solution[0].DeterminantOf() << "\n\n";
 
-	for (auto& row: solution[1]->storage) {
+	for (auto& row: solution[1].storage) {
 		for (auto& element: row) {
 			std::cout << element << " ";
 		}
@@ -38,7 +38,38 @@ int main () {
 
 	std::cout << "\n";
 
-	for (auto& row: solution[2]->storage) {
+	for (auto& row: solution[2].storage) {
+		for (auto& element: row) {
+			std::cout << element << " ";
+		}
+		std::cout << "\n";
+	}
+
+	auto LU = lu_transform(A);
+
+	std::cout << "\n";
+
+	for (auto& row: LU[0].storage) {
+		for (auto& element: row) {
+			std::cout << element << " ";
+		}
+		std::cout << "\n";
+	}
+
+	std::cout << "\n";
+
+	for (auto& row: LU[1].storage) {
+		for (auto& element: row) {
+			std::cout << element << " ";
+		}
+		std::cout << "\n";
+	}
+
+	LU[0].MultiplyWith(LU[1]);
+
+	std::cout << "\n";
+
+	for (auto& row: LU[0].storage) {
 		for (auto& element: row) {
 			std::cout << element << " ";
 		}
