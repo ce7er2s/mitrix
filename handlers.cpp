@@ -408,7 +408,7 @@ template <typename T> void Handlers::TransposeHandler(std::vector<Matrix<T>>& Ma
 	matrix.Transpose();
 }
 
-template <typename T> void Handlers::ABXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+template <typename T> void Handlers::ABXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& A = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& B = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto& X = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
@@ -419,13 +419,15 @@ template <typename T> void Handlers::ABXHandler(std::vector<Matrix<T>>& MatrixSe
 		throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
 	}
 	try {
+		PERF_COUNTER = 0;
 		X = gauss_method<T>(A, B);
+		ostream << "PERFORMANCE: " << PERF_COUNTER << "\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	}
 }
 
-template <typename T> void Handlers::ALUHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+template <typename T> void Handlers::ALUHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& A = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& L = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto& U = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
@@ -436,15 +438,17 @@ template <typename T> void Handlers::ALUHandler(std::vector<Matrix<T>>& MatrixSe
 		throw ExceptionWithMessage(L"Матрица имеет нулевые размеры.");
 	}
 	try {
+		PERF_COUNTER = 0;
 		auto LU = lu_transform<T>(A);
 		L = LU[0];
 		U = LU[1];
+		ostream << "PERFORMANCE: " << PERF_COUNTER << "\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	};
 }
 
-template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& L = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& U = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto& B = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
@@ -467,7 +471,9 @@ template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixS
 		throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
 	}
 	try {
+		PERF_COUNTER = 0;
 		X = lubx_method<T>(L, U, B);
+		ostream << "PERFORMANCE: " << PERF_COUNTER << "\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	}

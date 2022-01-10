@@ -135,13 +135,13 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
                 Handlers::HelpHandler(Arguments, Help, ostream);
                 break;
 			} case 25: {
-				Handlers::ABXHandler(MatrixSet, Arguments);
+				Handlers::ABXHandler(MatrixSet, Arguments, ostream);
 				break;
 			} case 26: { // Выход
-				Handlers::ALUHandler(MatrixSet, Arguments);
+				Handlers::ALUHandler(MatrixSet, Arguments, ostream);
 				break;
 			} case 27: { // Пустая строка
-				Handlers::LUBXHandler(MatrixSet, Arguments);
+				Handlers::LUBXHandler(MatrixSet, Arguments, ostream);
 				break;
 			} case 28: {
 				return -1;

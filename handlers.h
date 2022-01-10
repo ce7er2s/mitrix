@@ -80,13 +80,13 @@ namespace Handlers {
 
 	std::basic_ofstream<wchar_t> OpenOFileHandler(std::wstring& path);
 
-	template <typename T> void LUTransformHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
+	// template <typename T> void LUTransformHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream);
 
-	template <typename T> void ALUHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments);
+	template <typename T> void ALUHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments, std::basic_ostream<wchar_t>& ostream);
 
-	template <typename T> void ABXHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments);
+	template <typename T> void ABXHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments, std::basic_ostream<wchar_t>& ostream);
 
-	template <typename T> void LUBXHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments);
+	template <typename T> void LUBXHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments, std::basic_ostream<wchar_t>& ostream);
 }
 
 #include "handlers.cpp"
