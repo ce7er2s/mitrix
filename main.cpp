@@ -184,7 +184,7 @@ void StartUp(std::vector<std::wstring>& Settings, std::map<std::wstring, int> &C
 }
 
 int main() {
-	std::vector<std::wstring> on_startup = {L"execute /home/reenie/startup.msh", L"это не команда, но справка по команде help."};
+	std::vector<std::wstring> on_startup = {L"execute ./startup.msh", L"это не команда, но справка по команде help."};
 	setlocale(LC_CTYPE, "");
 
 	std::vector<Matrix<MATRIX_T>> MatrixSet(10);
