@@ -270,15 +270,16 @@ public:
 template <typename T> Matrix<T> gauss_method(Matrix<T> A_matrix, Matrix<T> B_matrix) {
 	auto tempX = Matrix<T>(B_matrix);
 
-	for (size_t j = 0; j < A_matrix.rows-1; j++) { // перебор от нулевого столбца до предпоследнего
-		for (size_t i = 1; i <= A_matrix.rows - 1; i++) { // перебор с первой строчки до последней
+	for (size_t j = 0; j < A_matrix.columns-1; j++) { // перебор от нулевого столбца до предпоследнего
+		for (size_t i = 1; i < A_matrix.rows; i++) { // перебор с первой строчки до последней
 			if (i > j) {
 				if (A_matrix.storage[j][j] == 0) {
 					throw L"Деление на ноль.";
 				}
 				T weight = A_matrix.storage[i][j] / A_matrix.storage[j][j]; // коэффициент для i-той строки
 				PERF_COUNTER++;
-				for (size_t k = 0; k < A_matrix.columns; k++, PERF_COUNTER++) {
+				A_matrix.storage[i][j] = 0;
+				for (size_t k = j+1; k < A_matrix.columns; k++, PERF_COUNTER++) {
 					A_matrix.storage[i][k] -= weight * A_matrix.storage[j][k]; // вычитание j-той строки, умноженной на коэффициент, из i-той
 				}
 				B_matrix.storage[i][0] -= weight * B_matrix.storage[j][0];
@@ -287,12 +288,11 @@ template <typename T> Matrix<T> gauss_method(Matrix<T> A_matrix, Matrix<T> B_mat
 		}
 	}
 	// std::cout << "\n" << A_matrix.DeterminantOf() << " " <<  A_matrix.DeterminantOf() << "\n\n";
-	for (size_t i = A_matrix.rows-1; i != 0; i--) { // i и Matrix::rows это uint32_t. Они не могут быть меньше нуля
+	for (size_t i = A_matrix.rows-1; i != 0; i--, PERF_COUNTER++) { // i и Matrix::rows это uint32_t. Они не могут быть меньше нуля
 		T x = B_matrix.storage[i][0] / A_matrix.storage[i][i]; // находим нижний X
-		PERF_COUNTER++;
-		for (size_t j = 0; j < A_matrix.rows-1; j++, PERF_COUNTER++) {
+		for (size_t j = 0; j < i; j++, PERF_COUNTER++) {
 			B_matrix.storage[j][0] -= x * A_matrix.storage[j][i]; // вычитаем разницу из свободного члена
-			A_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
+			//A_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
 		}
 		tempX.storage[i][0] = x; // записываем X
 	}
@@ -307,26 +307,24 @@ template <typename T> Matrix<T> gauss_method(Matrix<T> A_matrix, Matrix<T> B_mat
 
 template <typename T> std::vector<Matrix<T>> lu_transform(Matrix<T>& A_matrix) {
 	auto tempL = Matrix<T>(A_matrix.rows, A_matrix.columns);
-	auto tempU = Matrix<T>(A_matrix.rows, A_matrix.columns);
+	auto tempU = Matrix<T>(A_matrix);
 	for (size_t i = 0; i < A_matrix.rows; i++) {
 		tempL.storage[i][i] = 1;
 		//tempU.storage[i][i] = A_matrix.storage[i][i];
 	}
-	T summary;
-	for (int64_t i = 0; i < A_matrix.rows; i++) {
-		for (size_t j = 0; j < A_matrix.columns; j++) {
-			summary = 0;
-			for (int64_t k = 0; k <= i-1; k++, PERF_COUNTER++) {
-				summary += tempL.storage[i][k] * tempU.storage[k][j]; // сумма какая-то (произведение двух столбцов L и U
-			}
-			if (i > j) { // заполнение L матрицы
+	for (size_t j = 0; j < tempU.columns-1; j++) { // перебор от нулевого столбца до предпоследнего
+		for (size_t i = 1; i < tempU.rows; i++) { // перебор с первой строчки до последней
+			if (i > j) {
 				if (tempU.storage[j][j] == 0) {
 					throw L"Деление на ноль.";
 				}
-				tempL.storage[i][j] = (A_matrix.storage[i][j] - summary) / tempU.storage[j][j];
+				T weight = tempU.storage[i][j] / tempU.storage[j][j]; // коэффициент для i-той строки
 				PERF_COUNTER++;
-			} else { // заполнение U матрицы
-				tempU.storage[i][j] = A_matrix.storage[i][j] - summary;
+				tempU.storage[i][j] = 0;
+				for (size_t k = j+1; k < tempU.columns; k++, PERF_COUNTER++) {
+					tempU.storage[i][k] -= weight * tempU.storage[j][k]; // вычитание j-той строки, умноженной на коэффициент, из i-той
+				}
+				tempL.storage[i][j] = weight;
 			}
 		}
 	}
@@ -342,13 +340,11 @@ template <typename T> Matrix<T> lubx_method(Matrix<T> L_matrix, Matrix<T> U_matr
 		if (B_matrix.storage[i][0] == 0) {
 			throw L"Деление на ноль.";
 		}
-		x = B_matrix.storage[i][0] / L_matrix.storage[i][i]; // находим нижний X
-		PERF_COUNTER++;
-		for (size_t j = 1; j < L_matrix.rows; j++, PERF_COUNTER++) {
-			B_matrix.storage[j][0] -= x * L_matrix.storage[j][i]; // вычитаем разницу из свободного члена
-			L_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
+		for (size_t j = i+1; j < L_matrix.rows; j++, PERF_COUNTER++) {
+			B_matrix.storage[j][0] -= B_matrix.storage[i][0] * L_matrix.storage[j][i]; // вычитаем разницу из свободного члена
+			//L_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
 		}
-		tempY.storage[i][0] = x; // записываем X
+		tempY.storage[i][0] = B_matrix.storage[i][0]; // записываем X
 	}
 	// обратная подстановка UX = Y
 
@@ -358,7 +354,7 @@ template <typename T> Matrix<T> lubx_method(Matrix<T> L_matrix, Matrix<T> U_matr
 		}
 		x = tempY.storage[i][0] / U_matrix.storage[i][i]; // находим нижний X
 		PERF_COUNTER++;
-		for (size_t j = 0; j < U_matrix.rows-1; j++, PERF_COUNTER++) {
+		for (size_t j = 0; j < i; j++, PERF_COUNTER++) {
 			tempY.storage[j][0] -= x * U_matrix.storage[j][i]; // вычитаем разницу из свободного члена
 			U_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
 		}

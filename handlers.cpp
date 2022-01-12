@@ -420,8 +420,9 @@ template <typename T> void Handlers::ABXHandler(std::vector<Matrix<T>>& MatrixSe
 	}
 	try {
 		PERF_COUNTER = 0;
+		uint32_t n = A.rows;
 		X = gauss_method<T>(A, B);
-		ostream << "PERFORMANCE: " << PERF_COUNTER << "\n";
+		ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*(n*n-1)/3 + n*n << ")\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	}
@@ -439,10 +440,11 @@ template <typename T> void Handlers::ALUHandler(std::vector<Matrix<T>>& MatrixSe
 	}
 	try {
 		PERF_COUNTER = 0;
+		uint32_t n = A.rows;
 		auto LU = lu_transform<T>(A);
 		L = LU[0];
 		U = LU[1];
-		ostream << "PERFORMANCE: " << PERF_COUNTER << "\n";
+		ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*(n*n-1)/3 << ")\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	};
@@ -472,8 +474,9 @@ template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixS
 	}
 	try {
 		PERF_COUNTER = 0;
+		uint32_t n = L.rows;
 		X = lubx_method<T>(L, U, B);
-		ostream << "PERFORMANCE: " << PERF_COUNTER << "\n";
+		ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*n << ")\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	}
