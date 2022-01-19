@@ -48,9 +48,9 @@ namespace Handlers {
 
 	template <typename T> void ResizeMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 
-	template <typename T> void MatrixMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
+	template <typename T> void MatrixMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream);
 
-	template <typename T> void MatrixSelfMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
+	template <typename T> void MatrixSelfMultiplicationHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream);
 	
 	template <typename T> void MultiplicationByMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments);
 	

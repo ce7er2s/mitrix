@@ -87,10 +87,10 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::ResizeMatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 9: {  // Умножение матриц
-				Handlers::MatrixMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
+				Handlers::MatrixMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				break;
 			} case 10: { // Умножение самой матрицы (*=)
-				Handlers::MatrixSelfMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments);
+				Handlers::MatrixSelfMultiplicationHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
 				break;
 			} case 11: {	// Вывод детерминанта.
 				Handlers::DeterminantHandler<MATRIX_T>(MatrixSet, Arguments, ostream);
@@ -123,7 +123,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::SubmatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 21: {
-				ostream << L"Не пали контору." << L"\n";
+				ostream << L"it wont help ya" << L"\n";
 				break;
 			} case 22: {
 				Handlers::CopyMatrixHandler(MatrixSet, Arguments);

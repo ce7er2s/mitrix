@@ -143,7 +143,7 @@ public:
 			temp[i].resize(temp_columns);
 		for (uint32_t i = 0; i < temp_rows; i++) { // Ниибаца тут тройной цикл.
 			for (uint32_t j = 0; j < temp_columns; j++) {
-				for (uint32_t k = 0; k < size; k++)
+				for (uint32_t k = 0; k < size; k++, PERF_COUNTER++) //
 					temp[i][j] += storage[i][k] * matrix.storage[k][j];
 			}
 		}

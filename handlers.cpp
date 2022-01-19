@@ -277,7 +277,7 @@ template <typename T> void Handlers::ResizeMatrixHandler(
 }
 
 template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	if (matrix1.columns != matrix2.rows) {
@@ -285,11 +285,14 @@ template <typename T> void Handlers::MatrixSelfMultiplicationHandler(
 	} else if (matrix1.rows == 0 || matrix1.columns == 0 || matrix2.rows == 0 || matrix2.columns == 0) {
 		throw ExceptionWithMessage(L"Нулевые размеры одной из матриц.");
 	}
+    uint32_t n = matrix1.rows;
+    PERF_COUNTER = 0;
 	matrix1.MultiplyWith(matrix2);
+    ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*n*n << ")\n";
 }
 
 template <typename T> void Handlers::MatrixMultiplicationHandler(
-		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
+		std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
 	auto& matrix1 = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& matrix2 = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto& matrix3 = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
@@ -299,7 +302,10 @@ template <typename T> void Handlers::MatrixMultiplicationHandler(
 		throw ExceptionWithMessage(L"Нулевые размеры одной из матриц.");
 	}
 	auto name = matrix3.name;
+    uint32_t n = matrix1.rows;
+    PERF_COUNTER = 0;
 	matrix3 = Matrix<T>(matrix1, matrix2);
+    ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*n*n << ")\n";
 	matrix3.name = name;
 }
 
