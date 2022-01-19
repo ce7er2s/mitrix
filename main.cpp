@@ -27,7 +27,7 @@ std::vector<std::wstring> ParseArguments(const std::wstring& to_parse) {
 }
 
 using MATRIX_T = double;
-using u_char = unsigned char;
+using u_char [[maybe_unused]] = unsigned char;
 
 int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t> &istream,
 		   std::map<std::wstring, int> &CommandMapping,
