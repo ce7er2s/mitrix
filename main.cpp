@@ -123,7 +123,7 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 				Handlers::SubmatrixHandler<MATRIX_T>(MatrixSet, Arguments);
 				break;
 			} case 21: {
-				ostream << L"it wont help ya" << L"\n";
+				ostream << L"it won't help ya" << L"\n";
 				break;
 			} case 22: {
 				Handlers::CopyMatrixHandler(MatrixSet, Arguments);
@@ -143,10 +143,16 @@ int Dispatcher(std::basic_ostream<wchar_t> &ostream, std::basic_istream<wchar_t>
 			} case 27: { // Пустая строка
 				Handlers::LUBXHandler(MatrixSet, Arguments, ostream);
 				break;
-			} case 28: {
+            } case 28: {
+                Handlers::LBCHandler(MatrixSet, Arguments, ostream);
+                break;
+            } case 29: {
+                Handlers::UCXHandler(MatrixSet, Arguments, ostream);
+                break;
+            } case 30: {
 				return -1;
-			} case 29: {
-				break;
+			} case 31: {
+				return 0;
 			} default: { // Команда не найдена
 				ostream << L"Ошибка: Команда \"" << Command << L"\" не найдена." << L"\n";
 			}
@@ -220,8 +226,10 @@ int main() {
 			{L"abx", 			25},
 			{L"alu", 			26},
 			{L"lubx", 			27},
-			{L"exit", 			28},
-			{L"", 				29}
+			{L"lbc", 			28},
+			{L"ucx", 			29},
+			{L"exit", 			30},
+			{L"", 				31}
 	};
 
     std::map<std::wstring, std::wstring> Help = {
@@ -250,6 +258,8 @@ int main() {
             {L"alu", 		L" номер_матрицы_A номер_матрицы_L номер_матрицы_U -- LU разложение матрицы A."},
             {L"abx", 		L" номер_матрицы_A номер_матрицы_B номер_матрицы_X -- решение СЛАУ A*X=B. Решение в матрице X."},
             {L"lubx", 		L" номер_матрицы_L номер_матрицы_U номер_матрицы_B номер_матрицы_X -- решение СЛАУ L*U*X=B. Матрицы L и U результат команды \"alu\". Результат в матрице X."},
+            {L"lbc", 		L" номер_матрицы_L номер_матрицы_B номер_матрицы_C -- прямая подстановка. Матрица L результат команды \"alu\". Результат в матрице С."},
+            {L"ucx", 		L" номер_матрицы_U номер_матрицы_C номер_матрицы_X -- обратная подстановка. Матрица U результат команды \"alu\". Результат в матрице X."},
             {L"exit", 		L" -- выход."}
     };
 

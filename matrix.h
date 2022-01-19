@@ -369,4 +369,41 @@ template <typename T> Matrix<T> lubx_method(Matrix<T> L_matrix, Matrix<T> U_matr
 	return tempX;
 }
 
+template <typename T> void straight_permutation(Matrix<T>& L_matrix, Matrix<T> B_matrix, Matrix<T>& C_matrix) {
+    T x;                                                                                        // Запись в B_matrix как в копию
+    // прямая подстановка для LY = B
+    for (size_t i = 0; i < L_matrix.rows; i++) { // i и Matrix::rows это uint32_t. Они не могут быть меньше нуля
+        if (B_matrix.storage[i][0] == 0) {
+            throw L"Деление на ноль.";
+        }
+        for (size_t j = i+1; j < L_matrix.rows; j++, PERF_COUNTER++) {
+            B_matrix.storage[j][0] -= B_matrix.storage[i][0] * L_matrix.storage[j][i]; // вычитаем разницу из свободного члена
+            //L_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
+        }
+        C_matrix.storage[i][0] = B_matrix.storage[i][0]; // записываем X
+    }
+}
+
+template <typename T> void reverse_permutation(Matrix<T>& U_matrix, Matrix<T> C_matrix, Matrix<T>& X_matrix) {// Запись в C_matrix как в копию
+    // прямая подстановка для LY = B
+    T x;
+    for (size_t i = U_matrix.rows-1; i != 0; i--) { // i и Matrix::rows это uint32_t. Они не могут быть меньше нуля
+        if (U_matrix.storage[i][i] == 0) {
+            throw L"Деление на ноль.";
+        }
+        x = C_matrix.storage[i][0] / U_matrix.storage[i][i]; // находим нижний X
+        PERF_COUNTER++;
+        for (size_t j = 0; j < i; j++, PERF_COUNTER++) {
+            C_matrix.storage[j][0] -= x * U_matrix.storage[j][i]; // вычитаем разницу из свободного члена
+            //U_matrix.storage[j][i] = 0; //  обнуляем коэффициент (он уже вынесен как разница со свободным членом)
+        }
+        X_matrix.storage[i][0] = x; // записываем X
+    }
+    if (U_matrix.storage[0][0] == 0) {
+        throw L"Деление на ноль.";
+    }
+    X_matrix.storage[0][0] = C_matrix.storage[0][0] / U_matrix.storage[0][0]; // поэтому тут случай для нуля
+    PERF_COUNTER++;
+}
+
 #endif // MITRIX_H]

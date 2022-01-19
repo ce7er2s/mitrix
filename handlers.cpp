@@ -418,12 +418,15 @@ template <typename T> void Handlers::ABXHandler(std::vector<Matrix<T>>& MatrixSe
 	auto& A = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
 	auto& B = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
 	auto& X = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
-	if (A.rows < A.columns) {
-		throw ExceptionWithMessage(L"СЛАУ имеет множество решений.");
+	if (A.rows != A.columns || X.rows != A.rows) {
+		throw ExceptionWithMessage(L"СЛАУ имеет несколько или ни одного верного решение.");
 	}
-	if (B.rows < A.columns) {
+	if (B.rows != A.columns) {
 		throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
 	}
+    if (B.columns == 0 || X.columns == 0 || B.rows == 0) {
+        throw ExceptionWithMessage(L"Одна из матриц имеет нулевые размеры.");
+    }
 	try {
 		PERF_COUNTER = 0;
 		uint32_t n = A.rows;
@@ -453,7 +456,7 @@ template <typename T> void Handlers::ALUHandler(std::vector<Matrix<T>>& MatrixSe
 		ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*(n*n-1)/3 << ")\n";
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
-	};
+	}
 }
 
 template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments, std::basic_ostream<wchar_t>& ostream) {
@@ -486,6 +489,52 @@ template <typename T> void Handlers::LUBXHandler(std::vector<Matrix<T>>& MatrixS
 	} catch (const wchar_t* error) {
 		throw ExceptionWithMessage(error);
 	}
+}
+
+template <typename T> void Handlers::LBCHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments, std::basic_ostream<wchar_t>& ostream) {
+    auto& L = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+    auto& B = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+    auto& C = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
+    if (L.rows != L.columns || C.rows != L.rows) {
+        throw ExceptionWithMessage(L"СЛАУ имеет несколько или ни одного верного решение.");
+    }
+    if (B.rows != L.columns) {
+        throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
+    }
+    if (B.columns == 0 || C.columns == 0 || B.rows == 0) {
+        throw ExceptionWithMessage(L"Одна из матриц имеет нулевые размеры.");
+    }
+    try {
+        PERF_COUNTER = 0;
+        uint32_t n = L.rows;
+        straight_permutation(L, B, C);
+        ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*(n-1)/2 << ")\n";
+    } catch (const wchar_t* error) {
+        throw ExceptionWithMessage(error);
+    }
+}
+
+template <typename T> void Handlers::UCXHandler(std::vector<Matrix<T>> &MatrixSet, std::vector<std::wstring> &Arguments, std::basic_ostream<wchar_t>& ostream) {
+    auto& U = Handlers::GetMatrixHandler(MatrixSet, Arguments[1]);
+    auto& C = Handlers::GetMatrixHandler(MatrixSet, Arguments[2]);
+    auto& X = Handlers::GetMatrixHandler(MatrixSet, Arguments[3]);
+    if (U.rows != U.columns || X.rows != U.rows) {
+        throw ExceptionWithMessage(L"СЛАУ имеет несколько или ни одного верного решение.");
+    }
+    if (C.rows != U.columns) {
+        throw ExceptionWithMessage(L"Матрица B не подходит размерам матрицы А");
+    }
+    if (C.columns == 0 || X.columns == 0 || C.rows == 0) {
+        throw ExceptionWithMessage(L"Одна из матриц имеет нулевые размеры.");
+    }
+    try {
+        PERF_COUNTER = 0;
+        uint32_t n = U.rows;
+        reverse_permutation(U, C, X);
+        ostream << "PERFORMANCE: " << PERF_COUNTER << " (ESTIMATE: " << n*(n+1)/2 << ")\n";
+    } catch (const wchar_t* error) {
+        throw ExceptionWithMessage(error);
+    }
 }
 
 template <typename T> void Handlers::CopyMatrixHandler(std::vector<Matrix<T>>& MatrixSet, std::vector<std::wstring>& Arguments) {
